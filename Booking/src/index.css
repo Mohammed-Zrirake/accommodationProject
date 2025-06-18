@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+@media (min-width: 1220px) {
+  .custom-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .custom-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .statics-card {
+    padding: 0px;
+    margin-bottom: 0px;
+  }
+}
