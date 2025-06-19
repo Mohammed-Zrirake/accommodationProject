@@ -14,6 +14,7 @@ const SearchByPropertyType=()=>{
             return res.json()
         }).then((data)=>{
             setAllProperty(data);
+            console.log(data);
         }).catch((error)=>{
             console.error("There was a problem with the fetch operation:", error);
         })

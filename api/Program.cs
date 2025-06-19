@@ -5,6 +5,8 @@ using api.Services;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,6 +52,12 @@ else{
  app.UseHttpsRedirection();   
 }
 app.UseCors("_myAllowSpecificOrigins");
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "images")),
+    RequestPath = "/images"
+});
 app.MapControllers();
 
 app.UseExceptionHandler("/error");
