@@ -46,6 +46,8 @@ namespace api.Controllers
             }
             return Ok(appartement.ToAppartementDto());
         }
+
+
         [HttpPost]
         public async Task<IActionResult> CreateAppartement([FromForm] CreateAppartementRequestDto appartementDto)
         {
@@ -54,7 +56,8 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
             var appartement = appartementDto.ToAppartementFromCreateDto(new List<string>());
-            
+            appartement.ProviderId = new Guid("B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37");
+
             try
             {
                 if (appartementDto.Photos != null && appartementDto.Photos.Count > 0)
@@ -88,7 +91,6 @@ namespace api.Controllers
             catch (Exception e)
             {
                 return StatusCode(500, new { error = "An internal server error occurred while saving the villa.", details = e.Message });
-
             }
             
             

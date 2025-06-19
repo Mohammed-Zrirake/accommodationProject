@@ -52,8 +52,7 @@ namespace api.Controllers
             await context.Amenities.AddAsync(amenityModel);
             
             await context.SaveChangesAsync();
-            
-            
+
             return CreatedAtAction(nameof(GetAll), new { id = amenityModel.AmenityId }, amenityModel.ToAmenityDto());
         }
     }

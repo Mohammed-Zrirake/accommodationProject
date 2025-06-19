@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios'; // 1. Import axios
 import Title from '../components/Title';
 import CommonPropertyFields from '../components/forms/CommonPropertyFields';
 import StandaloneAccommodationFields from '../components/forms/StandaloneAccomodationFields';
@@ -38,6 +39,26 @@ const AddProperty = () => {
         hasCourtyard: false, 
         traditionalDecor: false,
     });
+     const handleImageAdd = (file) => {
+        if (file) {
+            setFormData(prev => ({
+                ...prev,
+                images: [...prev.images, file]
+            }));
+        }
+    };
+
+    // --- NEW: Handler for removing an image by its index ---
+    const handleImageRemove = (indexToRemove) => {
+        setFormData(prev => ({
+            ...prev,
+            images: prev.images.filter((_, index) => index !== indexToRemove)
+        }));
+    };
+
+    // State for API call
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if (!isEditing) {
@@ -48,10 +69,11 @@ const AddProperty = () => {
         }
     }, [isEditing, resetCreationProcess, propertyId]);
 
+    // Input handlers remain unchanged
     const handleInputChange = (e) => { const { name, value, type, checked } = e.target; setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value })); };
     const handleAddressChange = (e) => { const { name, value } = e.target; setFormData(prev => ({ ...prev, address: { ...prev.address, [name]: value } })); };
     const handleImageChange = (key, file) => { setFormData(prev => ({ ...prev, images: { ...prev.images, [key]: file } })); };
-    const handleToggleAmenity = (amenityId) => {
+   const handleToggleAmenity = (amenityId) => {
         setFormData(prev => {
             const currentAmenities = prev.amenities;
             if (currentAmenities.includes(amenityId)) {
@@ -61,20 +83,77 @@ const AddProperty = () => {
             }
         });
     };
-    const handleSubmit = (e) => {
+
+    // --- THIS IS THE ONLY FUNCTION THAT IS MODIFIED ---
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const propertyDetails = { type: propertyType, ...formData };
-        setPropertyData(propertyDetails);
+
+        // --- Wizard Logic ---
         if (CONTAINER_TYPES.includes(propertyType)) {
+            setPropertyData(propertyDetails);
             const destination = isEditing ? `/properties/edit/${propertyId}/manage-units` : '/properties/add/manage-units';
             navigate(destination);
+            return; // Stop execution to go to the next step
+        }
+
+        // --- API Submission Logic for Standalone Properties ---
+        if (propertyType === 'Appartement') {
+            setIsLoading(true);
+            setError('');
+
+            const submissionData = new FormData();
+            
+            // Append all fields that the CreateAppartementRequestDto expects
+            submissionData.append('Name', propertyDetails.name);
+            submissionData.append('Description', propertyDetails.description);
+            submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
+            submissionData.append('Capacity', propertyDetails.capacity);
+            submissionData.append('NumberOfBedrooms', propertyDetails.numberOfBedrooms);
+            submissionData.append('NumberOfBathrooms', propertyDetails.numberOfBathrooms);
+            if (propertyDetails.floorNumber) {
+                submissionData.append('FloorNumber', propertyDetails.floorNumber);
+            }
+            
+            submissionData.append('Address.Street', propertyDetails.address.street);
+            submissionData.append('Address.City', propertyDetails.address.city);
+            submissionData.append('Address.Country', propertyDetails.address.country);
+            submissionData.append('Address.PostalCode', propertyDetails.address.postalCode || '');
+
+            propertyDetails.amenities.forEach(amenityId => {
+                submissionData.append('AmenityIds', amenityId);
+            });
+
+            Object.values(propertyDetails.images).forEach(file => {
+                if (file instanceof File) {
+                    submissionData.append('Photos', file);
+                }
+            });
+
+            try {
+               
+               const API_URL = 'http://localhost:5073/api/appartment';
+                await axios.post(API_URL, submissionData);
+                
+                alert('Apartment created successfully!');
+                resetCreationProcess();
+                navigate('/properties');
+
+            } catch (err) {
+                console.error('API Error:', err.response || err);
+                const errorMessage = err.response?.data?.title || err.response?.data?.error || err.message || 'An unknown error occurred.';
+                setError(`Submission failed: ${errorMessage}`);
+                alert(`Error: ${errorMessage}`);
+            } finally {
+                setIsLoading(false);
+            }
         } else {
-            console.log("Submitting final data for STANDALONE property:", propertyDetails);
-            alert('Standalone Property Ready for API Submission! Check console.');
-            resetCreationProcess();
-            navigate('/properties');
+            // Handle other standalone types like Villa, Cottage, etc.
+            alert(`API submission for property type '${propertyType}' is not yet implemented.`);
         }
     };
+    
+    // The renderSpecificFields function remains unchanged
     const renderSpecificFields = () => {
         switch (propertyType) {
             case 'Hotel': case 'Hostel': return ( <div className="mt-6"> <label htmlFor="starRating" className="block text-gray-700 font-medium mb-1">Star Rating</label> <input type="number" id="starRating" name="starRating" value={formData.starRating} onChange={handleInputChange} min="1" max="5" className={textInputStyle}/> </div> );
@@ -84,6 +163,7 @@ const AddProperty = () => {
         }
     };
 
+    // --- THE JSX LAYOUT IS UNCHANGED FROM YOUR ORIGINAL CODE ---
     return (
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-12">
              <Title
@@ -104,14 +184,13 @@ const AddProperty = () => {
             </div>
 
             <div className="mt-6">
-                {/* --- UPDATED: Pass the `propertyType` state as a prop --- */}
                 <CommonPropertyFields 
                     formData={formData} 
                     propertyType={propertyType} 
                     handleInputChange={handleInputChange} 
                     handleAddressChange={handleAddressChange} 
                     handleImageChange={handleImageChange}
-                    handleToggleAmenity={handleToggleAmenity} 
+                    onToggleAmenity={handleToggleAmenity}
                 />
                 
                 {STANDALONE_TYPES.includes(propertyType) && (
@@ -122,9 +201,10 @@ const AddProperty = () => {
             </div>
 
             <div className="pt-8 mt-8 border-t border-gray-200">
-                <button type="submit" className='bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg'>
-                    {CONTAINER_TYPES.includes(propertyType) ? 'Next: Add Rooms/Dorms' : (isEditing ? 'Save Changes' : 'Add Property')}
+                <button type="submit" disabled={isLoading} className='bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed'>
+                    {isLoading ? 'Submitting...' : (CONTAINER_TYPES.includes(propertyType) ? 'Next: Add Rooms/Dorms' : 'Add Property')}
                 </button>
+                {error && <p className="text-red-500 mt-4 font-semibold">{error}</p>}
             </div>
         </form>
     );
