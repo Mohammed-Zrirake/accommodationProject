@@ -1,2 +1,61 @@
+# ============================================
+# 🌐 React Frontend (client, frontend, etc.)
+# ============================================
+
+# Dependency directory — always ignore
+node_modules/
+
+# Production build output
+/build
+
+# Environment variables (keep .env.example if you want to share structure)
 .env
+.env.local
+.env.*.local
+
+# Debug/Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# macOS system files
+.DS_Store
+
+# ============================================
+# 🧱 ASP.NET Web API Backend
+# ============================================
+
+# Build and output folders
+bin/
+obj/
+
+# Rider, VS, VS Code settings (user-specific)
+*.user
+*.suo
+.vscode/
+.idea/
+*.code-workspace
+
+# Logs
 *.log
+
+# User secrets and development configs
+secrets.json
+appsettings.Development.json
+
+
+# ============================================
+# ✅ Keep These Files (DO NOT ignore!)
+# ============================================
+# Keep your dependency managers and config:
+!package.json
+!package-lock.json
+!yarn.lock
+
+# Keep project and solution files:
+!*.csproj
+!*.sln
+
+# Keep shared configuration
+!appsettings.json
+!.env.example
