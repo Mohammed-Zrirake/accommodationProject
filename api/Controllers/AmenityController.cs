@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.Amenity;
 using api.Mappers;
+using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,10 +15,8 @@ namespace api.Controllers
     [ApiController]
     public class AmenitiesController : ControllerBase
     {
-        // --- MODIFICATION 1: Add DbContext field ---
         private readonly ApplicationDbContext context;
 
-        // --- MODIFICATION 2: Inject DbContext in the constructor ---
         public AmenitiesController(ApplicationDbContext _context)
         {
             context = _context;
@@ -55,5 +54,6 @@ namespace api.Controllers
 
             return CreatedAtAction(nameof(GetAll), new { id = amenityModel.AmenityId }, amenityModel.ToAmenityDto());
         }
+        
     }
 }
