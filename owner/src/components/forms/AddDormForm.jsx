@@ -1,38 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { assets } from '../../assets/assets';
+import axios from 'axios';
 
 // --- Reusable Styles ---
 const textInputStyle = "w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors";
 
 // --- Sub-component for Dorm-specific Amenities ---
 const DormAmenitiesSelector = ({ selectedAmenities, onToggleAmenity }) => {
-    // This list should be tailored to dorms and ideally fetched from your backend
-    const ALL_DORM_AMENITIES = [
-        { id: 'wifi', name: 'Free Wi-Fi' },
-        { id: 'ac', name: 'Air Conditioning' },
-        { id: 'locker', name: 'Personal Locker' },
-        { id: 'outlet', name: 'Power Outlet' },
-        { id: 'reading-light', name: 'Reading Light' },
-        { id: 'shared-bathroom', name: 'Shared Bathroom' },
-        { id: 'kitchen-access', name: 'Kitchen Access' },
-        { id: 'laundry', name: 'Laundry Facilities' },
-    ];
+    // 2. Add state for fetching amenities
+    const [allAmenities, setAllAmenities] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // 3. Fetch data when the component mounts
+    useEffect(() => {
+        const fetchAmenities = async () => {
+            try {
+                const API_URL = 'http://localhost:5073/api/amenities';
+                const response = await axios.get(API_URL);
+                // You could filter here for amenities with a 'Dorm' category if you add one
+                setAllAmenities(response.data);
+            } catch (err) {
+                console.error("Failed to fetch amenities:", err);
+                setError("Could not load amenities.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchAmenities();
+    }, []);
+
+    if (isLoading) return <p className="mt-4 text-gray-500">Loading dorm amenities...</p>;
+    if (error) return <p className="mt-4 font-semibold text-red-500">{error}</p>;
 
     return (
         <div>
             <h5 className="font-medium text-gray-800 mb-3">Dorm Amenities</h5>
-            {/* Corrected responsive grid classes */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-3">
-                {ALL_DORM_AMENITIES.map(amenity => (
-                     <div key={amenity.id} className="flex items-center">
+                {/* 4. Map over the fetched amenities state */}
+                {allAmenities.map(amenity => (
+                     <div key={amenity.amenityId} className="flex items-center">
                         <input
                             type="checkbox"
-                            id={`dorm-amenity-${amenity.id}`}
-                            checked={selectedAmenities.includes(amenity.id)}
-                            onChange={() => onToggleAmenity(amenity.id)}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            id={`dorm-amenity-${amenity.amenityId}`}
+                            checked={selectedAmenities.includes(amenity.amenityId)}
+                            onChange={() => onToggleAmenity(amenity.amenityId)}
+                            className="h-4 w-4 rounded border-gray-300 ..."
                         />
-                        <label htmlFor={`dorm-amenity-${amenity.id}`} className="ml-2 text-sm text-gray-700">{amenity.name}</label>
+                        <label htmlFor={`dorm-amenity-${amenity.amenityId}`} className="ml-2 text-sm ...">{amenity.name}</label>
                     </div>
                 ))}
             </div>
@@ -70,7 +85,7 @@ const AddDormForm = ({ onAddDorm, onCancel }) => {
         description: '',
         rules: '',
         amenities: [],
-        photos: { 1: null, 2: null, 3: null, 4: null },
+        photos: { 1: null, 2: null, 3: null, 4: null , 5: null , 6: null },
         
         // --- CORRECTED: Using property names that EXACTLY match the Dorm C# model ---
         numberOfBeds: '',

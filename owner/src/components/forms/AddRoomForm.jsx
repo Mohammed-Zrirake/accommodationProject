@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { assets } from '../../assets/assets';
+import axios from 'axios';
 
 // --- Reusable Styles ---
 const textInputStyle = "w-full px-4 py-2 border border-gray-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors";
@@ -7,32 +8,47 @@ const selectInputStyle = "w-full px-4 py-2 border border-gray-400 rounded-lg foc
 
 // --- Sub-component for Room Amenities ---
 const RoomAmenitiesSelector = ({ selectedAmenities, onToggleAmenity }) => {
-    // In a real app, this list would be fetched from your backend API
-    const ALL_ROOM_AMENITIES = [
-        { id: 'wifi', name: 'Wi-Fi' },
-        { id: 'ac', name: 'Air Conditioning' },
-        { id: 'tv', name: 'TV' },
-        { id: 'minibar', name: 'Minibar' },
-        { id: 'balcony', name: 'Balcony/Patio' },
-        { id: 'ensuite', name: 'Ensuite Bathroom' },
-        { id: 'safe', name: 'In-room Safe' },
-        { id: 'desk', name: 'Work Desk' },
-    ];
+    // 2. Add state for fetching amenities
+    const [allAmenities, setAllAmenities] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // 3. Fetch data when the component mounts
+    useEffect(() => {
+        const fetchAmenities = async () => {
+            try {
+                const API_URL = 'http://localhost:5073/api/amenities';
+                const response = await axios.get(API_URL);
+                // Filter for amenities relevant to rooms if needed, otherwise use all
+                setAllAmenities(response.data);
+            } catch (err) {
+                console.error("Failed to fetch amenities:", err);
+                setError("Could not load amenities.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchAmenities();
+    }, []);
+
+    if (isLoading) return <p className="mt-4 text-gray-500">Loading room amenities...</p>;
+    if (error) return <p className="mt-4 font-semibold text-red-500">{error}</p>;
 
     return (
         <div>
             <h5 className="font-medium text-gray-800 mb-3">Room Amenities</h5>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-3">
-                {ALL_ROOM_AMENITIES.map(amenity => (
-                     <div key={amenity.id} className="flex items-center">
+                {/* 4. Map over the fetched amenities state */}
+                {allAmenities.map(amenity => (
+                     <div key={amenity.amenityId} className="flex items-center">
                         <input
                             type="checkbox"
-                            id={`room-amenity-${amenity.id}`}
-                            checked={selectedAmenities.includes(amenity.id)}
-                            onChange={() => onToggleAmenity(amenity.id)}
-                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            id={`room-amenity-${amenity.amenityId}`}
+                            checked={selectedAmenities.includes(amenity.amenityId)}
+                            onChange={() => onToggleAmenity(amenity.amenityId)}
+                            className="h-4 w-4 rounded border-gray-300 ..."
                         />
-                        <label htmlFor={`room-amenity-${amenity.id}`} className="ml-2 text-sm text-gray-700">{amenity.name}</label>
+                        <label htmlFor={`room-amenity-${amenity.amenityId}`} className="ml-2 text-sm ...">{amenity.name}</label>
                     </div>
                 ))}
             </div>
@@ -76,7 +92,7 @@ const AddRoomForm = ({ onAddRoom, onCancel }) => {
         capacity: '',
         rules: '',
         amenities: [],
-        photos: { 1: null, 2: null, 3: null, 4: null },
+        photos: { 1: null, 2: null, 3: null, 4: null , 5: null , 6: null },
         
         // Properties specific to the Room model
         roomType: '',
@@ -105,10 +121,11 @@ const AddRoomForm = ({ onAddRoom, onCancel }) => {
         setFormData(prev => ({ ...prev, photos: { ...prev.photos, [key]: file } }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        onAddRoom(formData);
-    };
+   const handleSubmit = (e) => {
+    e.preventDefault();
+    const photoFiles = Object.values(formData.photos).filter(file => file instanceof File);
+    onAddRoom({ ...formData, photos: photoFiles });
+};
 
     return (
         <form onSubmit={handleSubmit} className="p-6 border border-dashed rounded-lg mt-4 space-y-6 bg-gray-50/70">
@@ -166,7 +183,6 @@ const AddRoomForm = ({ onAddRoom, onCancel }) => {
             </div>
 
             <RoomAmenitiesSelector selectedAmenities={formData.amenities} onToggleAmenity={handleToggleAmenity} />
-
             <RoomImageUploader photos={formData.photos} onImageChange={handleImageChange} />
 
             {/* Actions */}
