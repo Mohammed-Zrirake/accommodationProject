@@ -1,42 +1,17 @@
 import React from "react"
 import { Link } from "react-router-dom"
 import { assets } from "../assets/assets"
-const HotelCard=({hotel})=>{
+const PropertyCard=({property,id,route,type})=>{
     
     return (
-        <Link to={'/rooms/'+hotel.hotelId} onClick={()=>scrollTo(0,0)} key={hotel.hotelId} className="relative max-w-70 w-full rounded-xl overflow-hidden bg-white text-gray-500/90 
+        <Link to={`/${route}/${id}`} onClick={()=>scrollTo(0,0)} key={id} className="relative max-w-70 w-full rounded-xl overflow-hidden bg-white text-gray-500/90 
             shadow-[0px_4px_4px_tgba(0,0,0,0.05)]">
-            {/*<img src={`https://localhost:7263/images/${hotel.photos[0]}`} alt={`${hotel.name} image`} 
-            
-            />
-            <p className="px-3 py-1 absolute top-3 left-3 text-xs bg-white text-gray-800 font-medium 
-            rounded-full">Best Seller</p>
-            <div className="flex items-center flex-col justify-between p-4 pt-5 ">
-                
-                <div className="flex justify-center items-center gap-2">
-                <p className="font-playfair text-xl font-medium text-gray-800">{hotel.name}</p>
-                </div>
-                <div className="flex items-center gap-1 text-sm">
-                <img src={assets.locationIcon} alt="location icon"  /> 
-                <span>{hotel.address.city} , {hotel.address.country}
-                </span>
-                <div className="flex items-center gap-1">
-                    <img src={assets.starIconFilled} alt="star icon"  /> <p>4.5</p>
-                </div>
-                </div>
-                <div className="flex items-center justify-between mt-4 gap-4">
-                    
-                    <button className="px-4 py-2 text-sm font-medium border border-gray-300
-                    rounded hover:bg-gray-50 transition-all cursor-pointer hover:text-amber-400
-                    ">See all available rooms now</button>
-                </div>
-            </div>*/}
            <div className="max-w-sm w-full bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
       <div className="relative">
         <div className="overflow-hidden">
           <img 
-            src={`https://localhost:7263/images/${hotel.photos[0]}`} 
-            alt={`${hotel.name} image`}
+            src={`https://localhost:7263/images/${property.photos[0]}`} 
+            alt={`${property.name} image`}
             className="w-full h-64 object-cover transition-transform duration-500 hover:scale-105"
           />
         </div>
@@ -46,7 +21,7 @@ const HotelCard=({hotel})=>{
             Best Seller
           </span>
           <span className="absolute top-0 right-3.5 px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded-full">
-            {hotel.address.city}
+            {property.address.city}
           </span>
         </div>
         
@@ -61,18 +36,18 @@ const HotelCard=({hotel})=>{
       <div className="p-5">
         <div className="mb-3">
           <Link 
-            to={`/rooms/${hotel.hotelId}`} 
+            to={`/${route}/${id}`} 
             onClick={() => window.scrollTo(0, 0)}
             className="text-2xl font-bold text-gray-800 hover:text-indigo-600 transition-colors"
           >
-            {hotel.name}
+            {property.name}
           </Link>
           
           <div className="flex items-center gap-1 text-gray-500 mt-1 mb-3 text-sm">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-500" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
             </svg>
-            <span>{hotel.address.city}, {hotel.address.country}</span>
+            <span>{property.address.city}, {property.address.country}</span>
           </div>
           
           
@@ -81,15 +56,16 @@ const HotelCard=({hotel})=>{
         <div className="flex items-center justify-between border-t border-gray-100 pt-4">
           
           
-          <button
+          <Link 
+            to={`/${route}/${id}`} 
             onClick={() => window.scrollTo(0, 0)}
             className="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white px-5 py-2.5 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
           >
-            <span>View Rooms</span>
+            <span>View {type}</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
             </svg>
-          </button>
+          </Link>
         </div>
       </div>
     </div>
@@ -99,4 +75,4 @@ const HotelCard=({hotel})=>{
         </Link>
     )
 }
-export default HotelCard
+export default PropertyCard
