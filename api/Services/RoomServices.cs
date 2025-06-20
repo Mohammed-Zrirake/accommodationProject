@@ -7,6 +7,7 @@ using api.Dtos.Room;
 using api.IServices;
 using api.Mappers;
 using api.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace api.Services
@@ -23,21 +24,14 @@ namespace api.Services
         public async Task<Room> CreateRoomAsync(CreateRoomRequestDto roomDto)
         {
             
-                // 1. Handle file storage first. If this fails, we haven't touched the DB.
+              
                 var photoUrls = await fileStorage.SaveAllFilesAsync(roomDto.Photos);
-
-                // 2. Map the DTO to the entity, providing the saved photo URLs.
                 var room = roomDto.ToRoomFromCreateDto(photoUrls);
-
-            // 3. Validate and associate many-to-many relationships (Amenities)
             if (roomDto.AmenityIds != null && roomDto.AmenityIds.Any())
             {
-                // Fetch all requested amenities from the DB in one query.
                 var amenities = await context.Amenities
                     .Where(a => roomDto.AmenityIds.Contains(a.AmenityId))
                     .ToListAsync();
-
-                // Check if all requested amenities were found.
                 if (amenities.Count != roomDto.AmenityIds.Count)
                 {
                     var foundIds = amenities.Select(a => a.AmenityId);
@@ -45,18 +39,12 @@ namespace api.Services
                     // Throw a specific, actionable exception. The controller will catch this.
                     throw new ArgumentException($"The following amenities were not found: {string.Join(", ", notFoundIds)}");
                 }
-
                 room.Amenities = amenities;
             }
 
-                
                 await context.Rooms.AddAsync(room);
                 await context.SaveChangesAsync();
-
-                
                 return room;
-            
-            
         }
 
         public async Task<List<RoomDto>?> GetAllAsync()
@@ -82,6 +70,23 @@ namespace api.Services
             }
 
             return room.ToRoomDto();
+        }
+
+        public async Task<Room?> DeleteAsync(Guid id)
+        {
+            var room = await context.Rooms.FirstOrDefaultAsync(r => r.Id == id);
+            if (room == null)
+            {
+                return null;
+            }
+            if (room.Photos != null && room.Photos.Any())
+            {
+                await fileStorage.DeleteAllFilesAsync(room.Photos);
+            }
+
+            context.Rooms.Remove(room);
+            await context.SaveChangesAsync();
+            return room;
         }
     }
 }

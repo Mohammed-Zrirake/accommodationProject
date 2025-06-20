@@ -4,7 +4,7 @@ import axios from 'axios';
 import Title from '../components/Title';
 import CommonPropertyFields from '../components/forms/CommonPropertyFields';
 import StandaloneAccommodationFields from '../components/forms/StandaloneAccomodationFields';
-import { usePropertyCreation } from '../context/PropertyCreationContext';
+
 
 const CONTAINER_TYPES = ['Hotel', 'Hostel', 'Riad'];
 const PROPERTY_TYPES = ['Hotel', 'Appartement', 'Villa', 'Riad', 'Cottage', 'Hostel'];
@@ -16,7 +16,7 @@ const AddProperty = () => {
     const { propertyId } = useParams();
     const navigate = useNavigate();
     const isEditing = Boolean(propertyId);
-    const { setPropertyData, resetCreationProcess } = usePropertyCreation();
+ 
     const [propertyType, setPropertyType] = useState(PROPERTY_TYPES[0]);
     const [formData, setFormData] = useState({
         name: '', 
@@ -63,13 +63,11 @@ const AddProperty = () => {
     };
 
     useEffect(() => {
-        if (!isEditing) {
-            resetCreationProcess();
-        }
+       
         if (isEditing) {
             console.log(`Fetching data for property ID: ${propertyId}`);
         }
-    }, [isEditing, resetCreationProcess, propertyId]);
+    }, [isEditing, propertyId]);
     const handleInputChange = (e) => { const { name, value, type, checked } = e.target; setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value })); };
     const handleAddressChange = (e) => { const { name, value } = e.target; setFormData(prev => ({ ...prev, address: { ...prev.address, [name]: value } })); };
    const handleToggleAmenity = (amenityId) => {
@@ -119,6 +117,7 @@ const handleSubmit = async (e) => {
 
  
     const submissionData = new FormData();
+    submissionData.append('ProviderId', "B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37")
     submissionData.append('Name', propertyDetails.name);
     submissionData.append('Description', propertyDetails.description);
     submissionData.append('Address.Street', propertyDetails.address.street);
@@ -134,7 +133,7 @@ const handleSubmit = async (e) => {
   
     switch (propertyType) {
         case 'Appartement':
-            submissionData.append('Id', "B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37");
+          
             submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
             submissionData.append('Capacity', propertyDetails.capacity);
             submissionData.append('NumberOfBedrooms', propertyDetails.numberOfBedrooms);
@@ -146,7 +145,7 @@ const handleSubmit = async (e) => {
             break;
             
         case 'Villa':
-             submissionData.append('Id', "B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37");
+        
             submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
             submissionData.append('Capacity', propertyDetails.capacity);
             submissionData.append('NumberOfBedrooms', propertyDetails.numberOfBedrooms);
@@ -155,7 +154,7 @@ const handleSubmit = async (e) => {
             break;
 
         case 'Cottage':
-            submissionData.append('Id', "B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37");
+           
             submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
             submissionData.append('Capacity', propertyDetails.capacity);
             submissionData.append('NumberOfBedrooms', propertyDetails.numberOfBedrooms);
@@ -166,7 +165,7 @@ const handleSubmit = async (e) => {
             break;
         
         case 'Riad':
-             submissionData.append('Id', "B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37");
+          
             submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
             submissionData.append('Capacity', propertyDetails.capacity);
             submissionData.append('HasCourtyard', propertyDetails.hasCourtyard);
@@ -175,13 +174,13 @@ const handleSubmit = async (e) => {
             break;
 
         case 'Hotel':
-             submissionData.append('HotelId', "B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37");
+           
             submissionData.append('StarRating', propertyDetails.starRating);
             propertyDetails.amenities.forEach(id => submissionData.append('AmenityIds', id));
             break;
 
         case 'Hostel':
-             submissionData.append('HostelId', "B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37")
+             
             submissionData.append('StarRating', propertyDetails.starRating);
             propertyDetails.amenities.forEach(id => submissionData.append('AmenityIds', id));
             break;
@@ -199,7 +198,7 @@ const handleSubmit = async (e) => {
     } catch (err) {
         console.error('API Error:', err.response || err);
         const errorMessage = err.response?.data?.errors 
-            ? Object.values(err.response.data.errors).flat().join(' ') // Handles .NET validation errors
+            ? Object.values(err.response.data.errors).flat().join(' ') 
             : err.response?.data?.title || err.response?.data?.error || err.message || 'An unknown error occurred.';
         setError(`Submission failed: ${errorMessage}`);
     } finally {

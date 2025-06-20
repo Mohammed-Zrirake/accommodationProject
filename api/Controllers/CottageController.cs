@@ -37,7 +37,6 @@ namespace api.Controllers
             
             return Ok(cottages);
         }
-
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
@@ -53,7 +52,6 @@ namespace api.Controllers
 
             return Ok(cottage.ToCottageDto());
         }
-
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] CreateCottageRequestDto cottageDto)
         {
@@ -80,5 +78,35 @@ namespace api.Controllers
             }
         }
 
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var cottage = await _context.Cottages.FirstOrDefaultAsync(c => c.Id == id);
+
+            if (cottage == null)
+            {
+                return NotFound($"Cottage with ID {id} not found.");
+            }
+
+            try
+            {
+                // 1. Delete associated photos, specifying the subfolder if you used one
+                if (cottage.Photos != null && cottage.Photos.Any())
+                {
+                    await _fileStorage.DeleteAllFilesAsync(cottage.Photos);
+                }
+
+                // 2. Remove the entity from the database
+                _context.Cottages.Remove(cottage);
+                await _context.SaveChangesAsync();
+
+                // 3. Return 204 No Content
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { error = "An error occurred while deleting the cottage.", details = e.Message });
+            }
+        }
     }
 }

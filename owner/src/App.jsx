@@ -6,8 +6,7 @@ import ListProperties from './pages/ListProperties';
 import AddProperty from './pages/AddProperty';
 import ManageUnits from './pages/ManageUnits';
 import Footer from './components/Footer';
-// Import your other components
-import { PropertyCreationProvider } from './context/PropertyCreationContext';
+
 
 
 function App() {

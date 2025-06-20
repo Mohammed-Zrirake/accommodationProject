@@ -10,5 +10,8 @@ namespace api.IServices
       
         Task<string>  SaveFileAsync(IFormFile file, string subfolder = "");
     Task<List<string>> SaveAllFilesAsync(IFormFileCollection files, string subfolder = "");
+
+        Task DeleteFileAsync(string fileName);
+        Task DeleteAllFilesAsync(List<string> fileNames);
     }
 }

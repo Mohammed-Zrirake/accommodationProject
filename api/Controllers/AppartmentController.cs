@@ -47,6 +47,38 @@ namespace api.Controllers
             return Ok(appartement.ToAppartementDto());
         }
 
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var appartement = await context.Appartements.FirstOrDefaultAsync(a => a.Id == id);
+
+            if (appartement == null)
+            {
+                return NotFound($"Apartment with ID {id} not found.");
+            }
+
+            try
+            {
+                // 1. Delete associated photos from the file system
+                if (appartement.Photos != null && appartement.Photos.Any())
+                {
+                    // Assuming photos are in the root 'images' folder, no subfolder needed
+                    await fileStorage.DeleteAllFilesAsync(appartement.Photos);
+                }
+
+                // 2. Remove the entity from the database
+                context.Appartements.Remove(appartement);
+                await context.SaveChangesAsync();
+
+                // 3. Return 204 No Content for a successful deletion
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                // Log the exception (optional) and return a server error
+                return StatusCode(500, new { error = "An error occurred while deleting the apartment.", details = e.Message });
+            }
+        }
 
         [HttpPost]
         public async Task<IActionResult> CreateAppartement([FromForm] CreateAppartementRequestDto appartementDto)
