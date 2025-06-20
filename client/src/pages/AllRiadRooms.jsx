@@ -2,23 +2,22 @@ import React, { useState,useEffect } from "react"
 import NavBar from "../components/NavBar"
 import Footer from "../components/Footer"
 import Title from "../components/title"
-import { assets, facilityIcons, hotelDummyData } from "../assets/assets"
-import StarRating from "../components/StarRating"
+
 import { useNavigate, useParams } from "react-router-dom"
 import Filters from "../components/Filters"
 import RoomCard from "../components/RoomCard"
 
-const AllRooms=()=>{
+const AllRiadRooms=()=>{
     
     const navigate=useNavigate()
     const {id}=useParams()
-    const [hotelData,setHotelData]=useState([])
+    const [riadData,setRiadData]=useState([])
     const [allRooms,setAllRooms]=useState([])
     useEffect(()=>{
-        fetch(`https://localhost:7263/api/hotel/${id}`).then(res=>{if((!res.ok)){
-            throw new Error("Failed to fetch hotel data")
+        fetch(`https://localhost:7263/api/riad/${id}`).then(res=>{if((!res.ok)){
+            throw new Error("Failed to fetch riad data")
         }
-        return res.json();}).then(data=>{setHotelData(data);
+        return res.json();}).then(data=>{setRiadData(data);
             setAllRooms(data.rooms);
             console.log(data.rooms)
         }).catch(error=>
@@ -31,7 +30,7 @@ const AllRooms=()=>{
         py-28 md:py-35 px-4 md:px-16 lg:px-24 "> 
         <div>
         <div className="max-w-174 md:w-full">
-        <Title title={`${hotelData.name} Hotel Rooms `}
+        <Title title={`${riadData.name} Hotel Rooms `}
             subTitle="Take advantage of our limited-time offers and special packages to 
             enhance your stay and create unforgettable memories" 
             align="left"/>
@@ -40,7 +39,7 @@ const AllRooms=()=>{
         {allRooms.map((room)=>(
             
             
-            <RoomCard hotelData={hotelData} room={room}/>
+            <RoomCard hotelData={riadData} room={room}/>
                     
         ))} </div>
         </div>   
@@ -52,4 +51,4 @@ const AllRooms=()=>{
 </>
     )
 }
-export default AllRooms
+export default AllRiadRooms
