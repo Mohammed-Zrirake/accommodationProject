@@ -1,89 +1,94 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import StarRating from './StarRating'; // Assuming you have this component
 
-const RoomCard = ({ room, hotelData }) => {
+
+const DormCard = ({ dorm, hostelData }) => {
   const navigate = useNavigate();
+
+  const getImageUrl = (imageName) => `https://localhost:7263/images/${imageName}`;
 
   return (
     <div 
-      key={room.id} 
-      className="group bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:translate-y-0.5 border border-gray-100 "
+      key={dorm.id} 
+      className="group bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100"
     >
       <div className="flex flex-col md:flex-row">
         {/* Image Section */}
         <div className="md:w-2/5 relative overflow-hidden">
           <img 
-            onClick={() => navigate(`/roomDetails/${room.id}`)}
-            src={`https://localhost:7263/images/${room.photos[0]}`} 
-            alt={room.name}
+            onClick={() => navigate(`/dormDetails/${dorm.id}`)}
+            src={getImageUrl(dorm.photos[0])} 
+            alt={dorm.name}
             className="w-full h-64 md:h-full object-cover cursor-pointer transition-transform duration-500 group-hover:scale-105"
           />
+          {/* Rating Badge */}
           <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium flex items-center gap-1">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
-            <span className="font-semibold">{room.averageRating || 'New'}</span>
+            <span className="font-semibold">{dorm.averageRating > 0 ? dorm.averageRating.toFixed(1) : 'New'}</span>
           </div>
           
+          {/* Capacity Badge - ADAPTED for dorms */}
           <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium">
             <div className="flex items-center gap-1">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.125-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.125-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              <span>{room.capacity} {room.capacity === 1 ? 'Guest' : 'Guests'}</span>
+              <span>{dorm.capacity} {dorm.capacity === 1 ? 'Bed' : 'Beds'}</span>
             </div>
           </div>
         </div>
         
         {/* Content Section */}
         <div className="md:w-3/5 p-6 flex flex-col h-full">
-          <div className="mb-3">
-            <span className="inline-block bg-indigo-100 text-indigo-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-              {hotelData.address.city}
-            </span>
-          </div>
-          
+          {/* Hostel Name - from hostelData */}
+          <p className="text-sm font-semibold text-indigo-600 mb-1">{hostelData.name}</p>
+
+          {/* Dorm Name - from dorm */}
           <h3 
-            onClick={() => navigate(`/roomDetails/${room.id}`)}
+            onClick={() => navigate(`/dormDetails/${dorm.id}`)}
             className="text-2xl font-bold text-gray-800 mb-2 cursor-pointer hover:text-indigo-600 transition-colors"
           >
-            {room.name}
+            {dorm.name}
           </h3>
           
           <p className="text-gray-600 mb-4 line-clamp-2">
-            {room.description}
+            {dorm.description}
           </p>
           
+          {/* Address - from hostelData */}
           <div className="flex items-center gap-1 text-gray-500 mb-4 text-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-500" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
             </svg>
-            <span className='text-amber-400'>{hotelData.address.street}, {hotelData.address.city}</span>
+            <span>{hostelData.address.street}, {hostelData.address.city}</span>
           </div>
           
+          {/* Amenities */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {room.amenities.slice(0, 4).map((item, index) => (
-              <div key={index} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs">
+            {dorm.amenities.slice(0, 4).map((item, index) => (
+              <div key={index} className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-700 text-xs font-medium">
                 <span>{item.name}</span>
               </div>
             ))}
-            {room.amenities.length > 4 && (
-              <div className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs">
-                +{room.amenities.length - 4} more
+            {dorm.amenities.length > 4 && (
+              <div className="px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs font-medium">
+                +{dorm.amenities.length - 4} more
               </div>
             )}
           </div>
           
           <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-100">
             <div>
-              <p className="text-2xl font-bold text-indigo-600">{room.basePricePerNight} Dh</p>
-              <p className="text-gray-500 text-sm">per night</p>
+              <p className="text-2xl font-bold text-indigo-600">{dorm.basePricePerNight} Dh</p>
+              {/* ADAPTED: More specific price description for a dorm */}
+              <p className="text-gray-500 text-sm">per bed, per night</p>
             </div>
             
             <button 
-              onClick={() => navigate(`/roomDetails/${room.id}`)}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-lg transition-colors duration-300"
+              onClick={() => navigate(`/dormDetails/${dorm.id}`)}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2.5 rounded-lg transition-colors duration-300"
             >
               <span>View Details</span>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -97,4 +102,4 @@ const RoomCard = ({ room, hotelData }) => {
   );
 };
 
-export default RoomCard;
+export default DormCard;

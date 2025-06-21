@@ -27,6 +27,7 @@ namespace api.Dtos.Riad
         // Riad-specific properties
         public bool HasCourtyard { get; set; }
         public bool TraditionalDecor { get; set; }
+        public  List<Guid> AmenitiesIds { get; set; } = new List<Guid>();
 
         // The ID of the user creating the Riad
         [Required]

@@ -23,7 +23,7 @@ namespace api.Mappers
                 HasCourtyard = riadModel.HasCourtyard,
                 TraditionalDecor = riadModel.TraditionalDecor,
                 ProviderId = riadModel.ProviderId,
-                
+                Amenities = riadModel.Amenities.Select(a => a.ToAmenityDto()).ToList(),
                 ProviderName = riadModel.Provider?.Username ?? string.Empty, 
                 
                 Rooms = riadModel.Rooms.Select(r => r.ToRoomDto()).ToList()

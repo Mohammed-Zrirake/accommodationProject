@@ -17,11 +17,11 @@ namespace api.Services
         private readonly IFileStorageService fileStorage;
         private readonly ILogger<DormServices> logger;
 
-        public DormServices(ApplicationDbContext context, IFileStorageService fileStorage, ILogger<DormServices> logger)
+        public DormServices(ApplicationDbContext _context, IFileStorageService _fileStorage, ILogger<DormServices> _logger)
         {
-            context = context;
-            fileStorage = fileStorage;
-            logger = logger;
+            context = _context;
+            fileStorage = _fileStorage;
+            logger = _logger;
         }
 
         public async Task<DormDto> CreateDormAsync(CreateDormRequestDto dormDto)
@@ -55,7 +55,6 @@ namespace api.Services
 
                 await context.Dorms.AddAsync(dorm);
                 await context.SaveChangesAsync();
-
                 // It's crucial to map the saved entity back to a DTO to include the generated ID.
                 return dorm.ToDormDto();
             }

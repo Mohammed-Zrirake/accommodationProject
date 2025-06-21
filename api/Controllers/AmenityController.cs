@@ -26,7 +26,7 @@ namespace api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var amenities = await context.Amenities
+            var amenities = await context.Amenities.OrderBy(a => a.Name)
                 .Select(a => a.ToAmenityDto())
                 .ToListAsync();
             if (amenities == null)

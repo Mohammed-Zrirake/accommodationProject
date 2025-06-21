@@ -28,7 +28,7 @@ namespace api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var hostels = await context.Hostels.Include(h => h.PrivateRooms).Include(h => h.Dorms).ToListAsync();
+            var hostels = await context.Hostels.Include(h => h.PrivateRooms).Include(h => h.Dorms).Include(h => h.Provider).ToListAsync();
             if (hostels == null)
             {
                 return NotFound();
@@ -38,7 +38,7 @@ namespace api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var hostel = await context.Hostels.Include(h => h.PrivateRooms).Include(h => h.Dorms).FirstOrDefaultAsync(h=>h.HostelId==id);
+            var hostel = await context.Hostels.Include(h => h.PrivateRooms).Include(h => h.Dorms).Include(h => h.Provider).FirstOrDefaultAsync(h=>h.HostelId==id);
             if (hostel == null)
             {
                 return NotFound();
