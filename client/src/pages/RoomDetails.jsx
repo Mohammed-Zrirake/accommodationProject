@@ -171,6 +171,7 @@ import { useEffect, useState } from "react";
 import { assets, facilityIcons } from "../assets/assets"; // Assuming roomCommonData is not essential or will be replaced
 import StarRating from "../components/StarRating";
 import NavBar from "../components/NavBar";
+import { HiLocationMarker, HiOutlineStar } from "react-icons/hi";
 
 // Helper for image URLs
 const getImageUrl = (imageName) => `https://localhost:7263/images/${imageName}`;
@@ -282,39 +283,45 @@ const RoomDetails = () => {
     <p className="text-lg md:text-xl text-gray-700 font-inter mt-1"> {/* Slightly larger, more distinct from title */}
         Part of <span className="font-semibold text-primary">{hotel.name}</span> {/* Using 'Part of' or 'In' can feel more integrated, highlight hotel name */}
     </p>
-    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-600 mt-3"> {/* flex-wrap for responsiveness, increased gap, increased top margin */}
-        {room.averageRating > 0 && (
-            <div className="flex items-center gap-1.5"> {/* Group stars and text rating */}
-                <StarRating rating={room.averageRating} small /> {/* Consider a 'small' prop for StarRating if available */}
-                <span className="font-medium text-gray-800">{`${room.averageRating.toFixed(1)}`}</span>
-                <span className="text-gray-500">/ 5</span>
-                {/* Optional: Add review count here if available: <span className="ml-1 text-gray-500">(123 reviews)</span> */}
-            </div>
-        )}
-
-        {/* More subtle separator if both rating and location are present */}
-        {room.averageRating > 0 && (
-            <span className="text-gray-300 hidden sm:inline">•</span> 
-        )}
-
-        <div className="flex items-center gap-1.5 group"> {/* Added 'group' for group-hover */}
-    <img
-        src={assets.locationIcon}
-        alt=""
-        className="w-4 h-4 text-gray-500 group-hover:text-primary transition-colors duration-150 flex-shrink-0"
-        aria-hidden="true"
-    />
-    <a
-        href={`https://maps.google.com/?q=${encodeURIComponent(hotel.address.street + ", " + hotel.address.city + ", " + hotel.address.country)}`}
-        target="_blank"
-        
-        className="text-sm text-purple-900 font-bold group-hover:text-primary hover:underline transition-colors duration-150"
-    >
-        {hotel.address.street}, {hotel.address.city} , 
-        {hotel.address.postalCode?hotel.address.postalCode:null}, {hotel.address.country}
-    </a>
-</div>
+    <div className="flex flex-wrap items-center gap-4 mt-3">
+  {room.averageRating > 0 && (
+    <div className="flex items-center gap-2 bg-yellow-50 px-3 py-1 rounded-full">
+      <div className="flex">
+        {[...Array(5)].map((_, i) => (
+          <HiOutlineStar
+            key={i}
+            className={`w-5 h-5 ${i < Math.round(room.averageRating) ? 'text-yellow-500 fill-current' : 'text-gray-300'}`}
+          />
+        ))}
+      </div>
+      <p className="font-medium text-gray-700">
+        {room.averageRating.toFixed(1)} / 5
+      </p>
     </div>
+  )}
+
+  <div className="flex items-center gap-2 font-bold text-purple-950/95">
+    <HiLocationMarker className="w-5 h-5 flex-shrink-0" />
+    <a
+      href={`https://maps.google.com/?q=${encodeURIComponent(
+        hotel.address.street +
+          ", " +
+          hotel.address.city +
+          (hotel.address.postalCode ? ", " + hotel.address.postalCode : "") +
+          ", " +
+          hotel.address.country
+      )}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-sm md:text-base hover:underline hover:text-primary transition-colors duration-150"
+    >
+      {hotel.address.street}, {hotel.address.city}
+      {hotel.address.stateOrProvince && `, ${hotel.address.stateOrProvince}`}
+      {hotel.address.postalCode && `, ${hotel.address.postalCode}`}
+      , {hotel.address.country}
+    </a>
+  </div>
+</div>
 </div>
                     {/* Image Gallery */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">

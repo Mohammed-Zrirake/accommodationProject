@@ -4,7 +4,7 @@ import { assets } from "../assets/assets"
 const StarRating=(props)=>{
 return(<div className="flex items-center gap-1 mt-4">
     {Array(5).fill(0).map((_, index) => (
-                                <img src={props.rating>index?assets.starIconFilled:assets.starIconOutlined}  />
+                                <img key={index} src={props.rating>index?assets.starIconFilled:assets.starIconOutlined}  />
                                         )
                          )}
 </div>)
