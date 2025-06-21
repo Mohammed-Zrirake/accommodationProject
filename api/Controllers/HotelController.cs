@@ -28,7 +28,7 @@ namespace api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var hotels = await context.Hotels.Include(h => h.Rooms).ToListAsync();
+            var hotels = await context.Hotels.Include(h => h.Rooms).Include(h => h.Provider).Select(h=>h.ToHotelDto()).ToListAsync();
             if (hotels == null)
             {
                 return NotFound();
@@ -38,12 +38,12 @@ namespace api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var hotel = await context.Hotels.Include(h => h.Rooms).FirstOrDefaultAsync(h=>h.HotelId==id);
+            var hotel = await context.Hotels.Include(h => h.Rooms).Include(h => h.Provider).FirstOrDefaultAsync(h=>h.HotelId==id);
             if (hotel == null)
             {
                 return NotFound();
             }
-            return Ok(hotel);
+            return Ok(hotel.ToHotelDto());
         }
         [HttpPost]
         public async Task<IActionResult> CreateHotel([FromForm] CreateHotelRequestDto hotelDto)

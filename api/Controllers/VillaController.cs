@@ -26,7 +26,7 @@ namespace api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var villa = await context.Villas.Include(v => v.Amenities).ToListAsync();
+            var villa = await context.Villas.Include(v => v.Amenities).Include(v => v.Provider).ToListAsync();
             var villas = villa.Select(v => v.ToVillaDto());
             if (villas == null)
             {
@@ -38,7 +38,7 @@ namespace api.Controllers
         public async Task<IActionResult> GetById(Guid id)
         {
             var villa = await context.Villas
-        .Include(v => v.Amenities)
+        .Include(v => v.Amenities).Include(v => v.Provider)
         .FirstOrDefaultAsync(v => v.Id == id);
             if (villa == null)
             {
