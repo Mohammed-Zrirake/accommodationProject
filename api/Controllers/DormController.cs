@@ -13,12 +13,12 @@ namespace api.Controllers
     public class DormController : ControllerBase
     {
         private readonly IDormServices dormServices;
-       
+        private readonly ILogger<DormController> logger;
 
-        public DormController(IDormServices dormServices, ILogger<DormController> logger)
+        public DormController(IDormServices _dormServices, ILogger<DormController> _logger)
         {
-            dormServices = dormServices;
-            logger = logger;
+            dormServices = _dormServices;
+            logger = _logger;
             
         }
 
@@ -57,6 +57,9 @@ namespace api.Controllers
             }
             catch (Exception ex)
             {
+                // Catches unexpected errors
+                logger.LogError(ex, "An error occurred while creating a dorm.");
+            
                 
                 return StatusCode(500, new { error = "An internal server error occurred. Please try again later." });
             }
@@ -80,7 +83,7 @@ namespace api.Controllers
             }
             catch (Exception ex)
             {
-               
+               logger.LogError(ex, "An error occurred while deleting a dorm.");
                 return StatusCode(500, new { error = "An internal server error occurred. Please try again later." });
             }
         }
