@@ -12,6 +12,7 @@ import {
   HiOutlineClock,
   HiOutlineHome
 } from "react-icons/hi";
+import Title from "../components/title"
 
 
 const HotelDetails=()=>{
@@ -190,13 +191,14 @@ const HotelDetails=()=>{
           </div>
         </div>
       </div>
+        {allRooms.length >0 && <> <Title title="Rooms" align="left" />
         <div  className="mb-8 xl:p-6">
         {allRooms.map((room)=>(
             
             
             <RoomCard hotelData={hotelData} room={room}/>
                     
-        ))} </div>
+        ))} </div></>}
         </div>   
         
         

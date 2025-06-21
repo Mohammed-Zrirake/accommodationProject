@@ -31,6 +31,7 @@ namespace api.Controllers
             var riads = await _context.Riads
                 .Include(r => r.Rooms)
                 .Include(r => r.Provider)
+                .Include(r => r.Amenities)
                 .Select(r => r.ToRiadDto()) 
                 .AsNoTracking()
                 .ToListAsync();

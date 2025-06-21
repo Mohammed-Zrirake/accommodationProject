@@ -132,9 +132,9 @@ const FeaturedDestination=()=>{
 
             <div className='flex flex-wrap items-center justify-center gap-6 mt-12 border-b border-gray-300 shadow-2xl shadow-gray-200 pb-12'>
                 {viewAllRiad?
-                riadData.map((riad)=><PropertyCard property={riad} id={riad.riadId} route="riadDetails" type="riad" />)
+                riadData.map((riad)=><PropertyCard property={riad} id={riad.id} route="riadDetails" type="riad" />)
                 :
-                riadData.slice(0,3).map((riad)=><PropertyCard property={riad} id={riad.riadId} route="riadDetails" type="riad" />)
+                riadData.slice(0,3).map((riad)=><PropertyCard property={riad} id={riad.id} route="riadDetails" type="riad" />)
                 }
             </div>
             <button className='-mt-5 px-4 py-2 text-sm font-medium border border-gray-300 rounded-full bg-white 

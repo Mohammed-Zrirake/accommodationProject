@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Dtos.Amenity;
 using api.Dtos.Room;
 using api.Models;
 
@@ -22,6 +23,7 @@ namespace api.Dtos.Riad
         // Flattened Provider information for convenience
         public Guid ProviderId { get; set; }
         public string ProviderName { get; set; } = string.Empty;
+        public  List<AmenityDto> Amenities { get; set; } = new List<AmenityDto>();
 
         // Collection of rooms within the Riad
         public ICollection<RoomDto> Rooms { get; set; } = new List<RoomDto>();

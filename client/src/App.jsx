@@ -11,8 +11,9 @@ import AppartmentDetails from "./pages/AppartmentDetails"
 import HotelDetails from "./pages/HotelDetails"
 import HostelDetails from "./pages/HostelDetails"
 import DormDetails from "./pages/DormDetails"
+import CottageDetails from "./pages/CottageDetails"
 function App(){
-const isOwnerPath=useLocation().pathname.includes("owner");
+
 return (
 <>
 
@@ -28,6 +29,7 @@ return (
    <Route path="/riadDetails/:id" element={<RiadDetails/>} />
    <Route path="/appartmentDetails/:id" element={<AppartmentDetails/>} />
   <Route path="/villaDetails/:id" element={<VillaDetails/>} />
+  <Route path="/cottageDetails/:id" element={<CottageDetails/>} />
    <Route path="/hostelDetails/:id" element={<HostelDetails/>} />
    <Route path="/my-bookings" element={<MyBookings/>} />
 </Routes>

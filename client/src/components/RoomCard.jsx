@@ -48,7 +48,7 @@ const RoomCard = ({ room, hotelData }) => {
             onClick={() => navigate(`/roomDetails/${room.id}`)}
             className="text-2xl font-bold text-gray-800 mb-2 cursor-pointer hover:text-indigo-600 transition-colors"
           >
-            {hotelData.name}
+            {room.name}
           </h3>
           
           <p className="text-gray-600 mb-4 line-clamp-2">

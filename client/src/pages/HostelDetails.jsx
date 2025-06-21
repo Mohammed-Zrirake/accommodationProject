@@ -196,7 +196,7 @@ const HostelDetails=()=>{
           </div>
         </div>
       </div>
-      {allRooms.length>0 && <><Title title="Rooms" align="left" />
+      {allRooms.length>0 && <><Title title="Private Rooms" align="left" />
         <div  className="mb-8 xl:p-6">
         {allRooms?.map((room)=>(
             
