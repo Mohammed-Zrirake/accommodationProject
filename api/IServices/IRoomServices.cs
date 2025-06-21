@@ -12,6 +12,6 @@ namespace api.IServices
         Task<List<RoomDto>?> GetAllAsync();
         Task<RoomDto?> GetByIdAsync(Guid id);
         Task<Room> CreateRoomAsync(CreateRoomRequestDto roomDto);
-
+        Task<Room?> DeleteAsync(Guid id);
     }
 }

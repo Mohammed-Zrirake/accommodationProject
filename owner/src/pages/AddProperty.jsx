@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios'; // 1. Import axios
+import axios from 'axios'; 
 import Title from '../components/Title';
 import CommonPropertyFields from '../components/forms/CommonPropertyFields';
 import StandaloneAccommodationFields from '../components/forms/StandaloneAccomodationFields';
-import { usePropertyCreation } from '../context/PropertyCreationContext';
 
-// --- Define which types need the second step ---
+
 const CONTAINER_TYPES = ['Hotel', 'Hostel', 'Riad'];
 const PROPERTY_TYPES = ['Hotel', 'Appartement', 'Villa', 'Riad', 'Cottage', 'Hostel'];
 const STANDALONE_TYPES = ['Appartement', 'Villa', 'Cottage', 'Riad'];
-
-// --- Reusable Styles ---
 const textInputStyle = "w-full px-4 py-2 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors";
 const selectInputStyle = "w-full px-4 py-2 border border-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors bg-white";
 
@@ -19,14 +16,18 @@ const AddProperty = () => {
     const { propertyId } = useParams();
     const navigate = useNavigate();
     const isEditing = Boolean(propertyId);
-    const { setPropertyData, resetCreationProcess } = usePropertyCreation();
-
+ 
     const [propertyType, setPropertyType] = useState(PROPERTY_TYPES[0]);
     const [formData, setFormData] = useState({
         name: '', 
         description: '', 
         address: { street: '', city: '', country: '', postalCode: '' }, 
-        images: { 1: null, 2: null, 3: null, 4: null },
+       images: [
+            { id: 1, file: null },
+            { id: 2, file: null },
+            { id: 3, file: null },
+            { id: 4, file: null },
+        ],
         amenities: [],
         basePricePerNight: '', 
         capacity: '',
@@ -39,40 +40,36 @@ const AddProperty = () => {
         hasCourtyard: false, 
         traditionalDecor: false,
     });
-     const handleImageAdd = (file) => {
-        if (file) {
-            setFormData(prev => ({
-                ...prev,
-                images: [...prev.images, file]
-            }));
-        }
-    };
-
-    // --- NEW: Handler for removing an image by its index ---
-    const handleImageRemove = (indexToRemove) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('');
+    const handleImageChange = (id, file) => {
         setFormData(prev => ({
             ...prev,
-            images: prev.images.filter((_, index) => index !== indexToRemove)
+            images: prev.images.map(img => img.id === id ? { ...img, file: file } : img)
+        }));
+    };
+    const handleImageRemove = (idToRemove) => {
+    setFormData(prev => ({
+        ...prev,
+        // Use filter to create a new array that EXCLUDES the image with the matching id.
+        images: prev.images.filter(image => image.id !== idToRemove)
+    }));
+    };
+    const handleAddImageSlot = () => {
+        setFormData(prev => ({
+            ...prev,
+            images: [...prev.images, { id: Date.now(), file: null }] // Use timestamp for unique ID
         }));
     };
 
-    // State for API call
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('');
-
     useEffect(() => {
-        if (!isEditing) {
-            resetCreationProcess();
-        }
+       
         if (isEditing) {
             console.log(`Fetching data for property ID: ${propertyId}`);
         }
-    }, [isEditing, resetCreationProcess, propertyId]);
-
-    // Input handlers remain unchanged
+    }, [isEditing, propertyId]);
     const handleInputChange = (e) => { const { name, value, type, checked } = e.target; setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value })); };
     const handleAddressChange = (e) => { const { name, value } = e.target; setFormData(prev => ({ ...prev, address: { ...prev.address, [name]: value } })); };
-    const handleImageChange = (key, file) => { setFormData(prev => ({ ...prev, images: { ...prev.images, [key]: file } })); };
    const handleToggleAmenity = (amenityId) => {
         setFormData(prev => {
             const currentAmenities = prev.amenities;
@@ -83,77 +80,7 @@ const AddProperty = () => {
             }
         });
     };
-
-    // --- THIS IS THE ONLY FUNCTION THAT IS MODIFIED ---
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const propertyDetails = { type: propertyType, ...formData };
-
-        // --- Wizard Logic ---
-        if (CONTAINER_TYPES.includes(propertyType)) {
-            setPropertyData(propertyDetails);
-            const destination = isEditing ? `/properties/edit/${propertyId}/manage-units` : '/properties/add/manage-units';
-            navigate(destination);
-            return; // Stop execution to go to the next step
-        }
-
-        // --- API Submission Logic for Standalone Properties ---
-        if (propertyType === 'Appartement') {
-            setIsLoading(true);
-            setError('');
-
-            const submissionData = new FormData();
-            
-            // Append all fields that the CreateAppartementRequestDto expects
-            submissionData.append('Name', propertyDetails.name);
-            submissionData.append('Description', propertyDetails.description);
-            submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
-            submissionData.append('Capacity', propertyDetails.capacity);
-            submissionData.append('NumberOfBedrooms', propertyDetails.numberOfBedrooms);
-            submissionData.append('NumberOfBathrooms', propertyDetails.numberOfBathrooms);
-            if (propertyDetails.floorNumber) {
-                submissionData.append('FloorNumber', propertyDetails.floorNumber);
-            }
-            
-            submissionData.append('Address.Street', propertyDetails.address.street);
-            submissionData.append('Address.City', propertyDetails.address.city);
-            submissionData.append('Address.Country', propertyDetails.address.country);
-            submissionData.append('Address.PostalCode', propertyDetails.address.postalCode || '');
-
-            propertyDetails.amenities.forEach(amenityId => {
-                submissionData.append('AmenityIds', amenityId);
-            });
-
-            Object.values(propertyDetails.images).forEach(file => {
-                if (file instanceof File) {
-                    submissionData.append('Photos', file);
-                }
-            });
-
-            try {
-               
-               const API_URL = 'http://localhost:5073/api/appartment';
-                await axios.post(API_URL, submissionData);
-                
-                alert('Apartment created successfully!');
-                resetCreationProcess();
-                navigate('/properties');
-
-            } catch (err) {
-                console.error('API Error:', err.response || err);
-                const errorMessage = err.response?.data?.title || err.response?.data?.error || err.message || 'An unknown error occurred.';
-                setError(`Submission failed: ${errorMessage}`);
-                alert(`Error: ${errorMessage}`);
-            } finally {
-                setIsLoading(false);
-            }
-        } else {
-            // Handle other standalone types like Villa, Cottage, etc.
-            alert(`API submission for property type '${propertyType}' is not yet implemented.`);
-        }
-    };
     
-    // The renderSpecificFields function remains unchanged
     const renderSpecificFields = () => {
         switch (propertyType) {
             case 'Hotel': case 'Hostel': return ( <div className="mt-6"> <label htmlFor="starRating" className="block text-gray-700 font-medium mb-1">Star Rating</label> <input type="number" id="starRating" name="starRating" value={formData.starRating} onChange={handleInputChange} min="1" max="5" className={textInputStyle}/> </div> );
@@ -163,17 +90,130 @@ const AddProperty = () => {
         }
     };
 
-    // --- THE JSX LAYOUT IS UNCHANGED FROM YOUR ORIGINAL CODE ---
+
+
+const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
+
+    const propertyDetails = { type: propertyType, ...formData };
+    const apiEndpoints = {
+        'Appartement': 'http://localhost:5073/api/appartment',
+        'Villa': 'http://localhost:5073/api/villa',
+        'Cottage': 'http://localhost:5073/api/cottage',
+        'Riad': 'http://localhost:5073/api/riad',
+        'Hotel': 'http://localhost:5073/api/hotel',
+        'Hostel': 'http://localhost:5073/api/hostel',
+    };
+
+    const API_URL = apiEndpoints[propertyType];
+
+    if (!API_URL) {
+        alert(`API submission for '${propertyType}' is not yet implemented.`);
+        setIsLoading(false);
+        return;
+    }
+
+ 
+    const submissionData = new FormData();
+    submissionData.append('ProviderId', "B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37")
+    submissionData.append('Name', propertyDetails.name);
+    submissionData.append('Description', propertyDetails.description);
+    submissionData.append('Address.Street', propertyDetails.address.street);
+    submissionData.append('Address.City', propertyDetails.address.city);
+    submissionData.append('Address.Country', propertyDetails.address.country);
+    submissionData.append('Address.PostalCode', propertyDetails.address.postalCode || '');
+
+   
+    propertyDetails.images.forEach(img => {
+        if (img.file) submissionData.append('Photos', img.file);
+    });
+
+  
+    switch (propertyType) {
+        case 'Appartement':
+          
+            submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
+            submissionData.append('Capacity', propertyDetails.capacity);
+            submissionData.append('NumberOfBedrooms', propertyDetails.numberOfBedrooms);
+            submissionData.append('NumberOfBathrooms', propertyDetails.numberOfBathrooms);
+            if (propertyDetails.floorNumber) {
+                submissionData.append('FloorNumber', propertyDetails.floorNumber);
+            }
+            propertyDetails.amenities.forEach(id => submissionData.append('AmenityIds', id));
+            break;
+            
+        case 'Villa':
+        
+            submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
+            submissionData.append('Capacity', propertyDetails.capacity);
+            submissionData.append('NumberOfBedrooms', propertyDetails.numberOfBedrooms);
+            submissionData.append('NumberOfBathrooms', propertyDetails.numberOfBathrooms);
+            propertyDetails.amenities.forEach(id => submissionData.append('AmenityIds', id));
+            break;
+
+        case 'Cottage':
+           
+            submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
+            submissionData.append('Capacity', propertyDetails.capacity);
+            submissionData.append('NumberOfBedrooms', propertyDetails.numberOfBedrooms);
+            submissionData.append('NumberOfBathrooms', propertyDetails.numberOfBathrooms);
+            submissionData.append('IsDetached', propertyDetails.isDetached);
+            submissionData.append('HasFireplace', propertyDetails.hasFireplace);
+            propertyDetails.amenities.forEach(id => submissionData.append('AmenityIds', id));
+            break;
+        
+        case 'Riad':
+          
+            submissionData.append('BasePricePerNight', propertyDetails.basePricePerNight);
+            submissionData.append('Capacity', propertyDetails.capacity);
+            submissionData.append('HasCourtyard', propertyDetails.hasCourtyard);
+            submissionData.append('TraditionalDecor', propertyDetails.traditionalDecor);
+            propertyDetails.amenities.forEach(id => submissionData.append('AmenityIds', id));
+            break;
+
+        case 'Hotel':
+           
+            submissionData.append('StarRating', propertyDetails.starRating);
+            propertyDetails.amenities.forEach(id => submissionData.append('AmenityIds', id));
+            break;
+
+        case 'Hostel':
+             
+            submissionData.append('StarRating', propertyDetails.starRating);
+            propertyDetails.amenities.forEach(id => submissionData.append('AmenityIds', id));
+            break;
+
+        default:
+            break;
+    }
+    
+   
+    try {
+        await axios.post(API_URL, submissionData);
+        alert(`${propertyType} created successfully!`);
+        navigate('/properties');
+
+    } catch (err) {
+        console.error('API Error:', err.response || err);
+        const errorMessage = err.response?.data?.errors 
+            ? Object.values(err.response.data.errors).flat().join(' ') 
+            : err.response?.data?.title || err.response?.data?.error || err.message || 'An unknown error occurred.';
+        setError(`Submission failed: ${errorMessage}`);
+    } finally {
+        setIsLoading(false);
+    }
+};
+    
     return (
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mb-12">
              <Title
                 align='left'
                 font='outfit'
-                title={`${isEditing ? 'Edit' : 'Add New'} Property${CONTAINER_TYPES.includes(propertyType) ? ' (Step 1 of 2)' : ''}`}
-                subtitle={CONTAINER_TYPES.includes(propertyType) 
-                    ? "First, provide the main details for your property." 
-                    : "Provide the details for your property."
-                }
+                 title={`${isEditing ? 'Edit' : 'Add New'} Property`}
+                subtitle="Provide the details for your property."
+            
             />
 
             <div className="mt-8">
@@ -189,8 +229,12 @@ const AddProperty = () => {
                     propertyType={propertyType} 
                     handleInputChange={handleInputChange} 
                     handleAddressChange={handleAddressChange} 
-                    handleImageChange={handleImageChange}
-                    onToggleAmenity={handleToggleAmenity}
+                    onImageChange={handleImageChange}
+                    onImageRemove={handleImageRemove}
+                    onAddImageSlot={handleAddImageSlot}
+                    onToggleAmenity={handleToggleAmenity} 
+                  
+
                 />
                 
                 {STANDALONE_TYPES.includes(propertyType) && (
@@ -201,8 +245,8 @@ const AddProperty = () => {
             </div>
 
             <div className="pt-8 mt-8 border-t border-gray-200">
-                <button type="submit" disabled={isLoading} className='bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200 shadow-md hover:shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed'>
-                    {isLoading ? 'Submitting...' : (CONTAINER_TYPES.includes(propertyType) ? 'Next: Add Rooms/Dorms' : 'Add Property')}
+                <button type="submit" disabled={isLoading} className='bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium ...'>
+                    {isLoading ? 'Submitting...' : (isEditing ? 'Save Changes' : 'Add Property')}
                 </button>
                 {error && <p className="text-red-500 mt-4 font-semibold">{error}</p>}
             </div>

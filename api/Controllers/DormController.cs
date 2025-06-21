@@ -12,34 +12,32 @@ namespace api.Controllers
     [Route("api/dorms")]
     public class DormController : ControllerBase
     {
-        private readonly IDormServices _dormServices;
-        private readonly ILogger<DormController> _logger;
+        private readonly IDormServices dormServices;
+       
 
         public DormController(IDormServices dormServices, ILogger<DormController> logger)
         {
-            _dormServices = dormServices;
-            _logger = logger;
+            dormServices = dormServices;
+            logger = logger;
             
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var dorms = await _dormServices.GetAllAsync();
+            var dorms = await dormServices.GetAllAsync();
             return Ok(dorms); // An empty list is a valid 200 OK response
         }
-        
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var dormDto = await _dormServices.GetByIdAsync(id);
+            var dormDto = await dormServices.GetByIdAsync(id);
             if (dormDto == null)
             {
                 return NotFound($"Dorm with ID {id} not found.");
             }
             return Ok(dormDto);
         }
-
         [HttpPost]
         public async Task<IActionResult> CreateDorm([FromForm] CreateDormRequestDto dormDto)
         {
@@ -47,11 +45,9 @@ namespace api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
             try
             {
-                var createdDorm = await _dormServices.CreateDormAsync(dormDto);
-                // Return a 201 Created status with a link to the new resource
+                var createdDorm = await dormServices.CreateDormAsync(dormDto);
                 return CreatedAtAction(nameof(GetById), new { id = createdDorm.Id }, createdDorm);
             }
             catch (ArgumentException ex)
@@ -61,9 +57,33 @@ namespace api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while creating a dorm.");
+                
                 return StatusCode(500, new { error = "An internal server error occurred. Please try again later." });
             }
         }
+       
+        
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            try
+            {
+                var deletedDorm = await dormServices.DeleteAsync(id);
+
+                if (deletedDorm == null)
+                {
+                    return NotFound($"Dorm with ID {id} not found.");
+                }
+
+               
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+               
+                return StatusCode(500, new { error = "An internal server error occurred. Please try again later." });
+            }
+        }
+
     }
 }

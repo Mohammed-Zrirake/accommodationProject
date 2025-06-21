@@ -54,7 +54,7 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
             var villa = villaDto.ToVillaRequestDto();
-            
+
             try
             {
                 if (villaDto.Photos != null && villaDto.Photos.Count > 0)
@@ -63,38 +63,68 @@ namespace api.Controllers
                     villa.Photos = fileNames;
                 }
                 villa.Amenities = new List<Amenity>(); // Initialize the collection
-        if (villaDto.AmenityIds != null && villaDto.AmenityIds.Any())
-        {
-            foreach (var amenityId in villaDto.AmenityIds)
-            {
-                // Find the real amenity in the database
-                var existingAmenity = await context.Amenities.FindAsync(amenityId);
-                if (existingAmenity != null)
+                if (villaDto.AmenityIds != null && villaDto.AmenityIds.Any())
                 {
-                    // Add the TRACKED entity from the database to the villa
-                    villa.Amenities.Add(existingAmenity);
+                    foreach (var amenityId in villaDto.AmenityIds)
+                    {
+                        // Find the real amenity in the database
+                        var existingAmenity = await context.Amenities.FindAsync(amenityId);
+                        if (existingAmenity != null)
+                        {
+                            // Add the TRACKED entity from the database to the villa
+                            villa.Amenities.Add(existingAmenity);
+                        }
+                        else
+                        {
+                            // An amenity ID was provided that doesn't exist. Handle this error.
+                            return BadRequest($"Amenity with ID {amenityId} was not found.");
+                        }
+                    }
                 }
-                else
-                {
-                    // An amenity ID was provided that doesn't exist. Handle this error.
-                    return BadRequest($"Amenity with ID {amenityId} was not found.");
-                }
-            }
-        }
-            await context.Villas.AddAsync(villa);
-            await context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById),new {id=villa.Id},villa.ToVillaDto());
+                await context.Villas.AddAsync(villa);
+                await context.SaveChangesAsync();
+                return CreatedAtAction(nameof(GetById), new { id = villa.Id }, villa.ToVillaDto());
             }
             catch (Exception e)
             {
                 return StatusCode(500, new { error = "An internal server error occurred while saving the villa.", details = e.Message });
 
             }
-            
-            
+
+
+        }
+      
+        
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var villa = await context.Villas.FirstOrDefaultAsync(v => v.Id == id);
+
+            if (villa == null)
+            {
+                return NotFound($"Villa with ID {id} not found.");
+            }
+
+            try
+            {
+                // 1. Delete associated photos
+                if (villa.Photos != null && villa.Photos.Any())
+                {
+                    await fileStorage.DeleteAllFilesAsync(villa.Photos);
+                }
+
+                // 2. Remove the entity from the database
+                context.Villas.Remove(villa);
+                await context.SaveChangesAsync();
+
+                // 3. Return 204 No Content
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return StatusCode(500, new { error = "An error occurred while deleting the villa.", details = e.Message });
+            }
         }
     }
-
-    
-
 }

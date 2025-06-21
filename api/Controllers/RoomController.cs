@@ -20,7 +20,6 @@ namespace api.Controllers
             roomServices = _roomServices;
         }
 
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -45,7 +44,6 @@ namespace api.Controllers
             }
         }
         [HttpGet]
-        
         public async Task<IActionResult> GetAll()
         {
             var rooms = await roomServices.GetAllAsync();
@@ -54,6 +52,27 @@ namespace api.Controllers
                 return NotFound();
             }
             return Ok(rooms);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        {
+            try
+            {
+                var deletedRoom = await roomServices.DeleteAsync(id);
+
+                if (deletedRoom == null)
+                {
+                    return NotFound($"Room with ID {id} not found.");
+                }
+
+                
+                return NoContent();
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { error = "An error occurred while deleting the room.", details = e.Message });
+            }
         }
     }
 }

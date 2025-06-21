@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using api.IServices;
+using Microsoft.AspNetCore.Http;
 
 namespace api.Services
 {
@@ -44,7 +46,6 @@ namespace api.Services
             }
             return newFileName;
         }
-
         public async Task<List<string>> SaveAllFilesAsync(IFormFileCollection files, string subfolder = "")
         {
             if (files == null || !files.Any())
@@ -59,5 +60,41 @@ namespace api.Services
             }
             return savedFileName;
         }
+
+
+        public Task DeleteFileAsync(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return Task.CompletedTask;
+            }
+
+           
+
+            var filePath = Path.Combine(folderUploadPath, fileName);
+
+          
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+
+            return Task.CompletedTask;
+        }
+        public async Task DeleteAllFilesAsync(List<string> fileNames)
+        {
+            if (fileNames == null || !fileNames.Any())
+            {
+                return;
+            }
+
+            foreach (var fileName in fileNames)
+            {
+                // Pass the subfolder to the single file delete method
+                await DeleteFileAsync(fileName);
+            }
+        }
     }
 }
+   
+    
