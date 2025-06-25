@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import NavBar from "../components/NavBar"; // Assuming you have this component
-import StarRating from "../components/StarRating"; // Assuming you have this component
-
+import NavBar from "../components/NavBar"; 
+import StarRating from "../components/StarRating"; 
+import Footer from "../components/Footer"; 
 import { 
   HiLocationMarker, 
   
@@ -14,10 +14,10 @@ import {
   HiOutlineExclamationCircle // For error state
 } from "react-icons/hi";
 
-// New icons that might be relevant for a cottage
-import { FaSwimmingPool } from "react-icons/fa"; 
+import { HiExclamationCircle } from "react-icons/hi"; 
 import { GiBathtub } from "react-icons/gi";
 import { IoBedOutline } from "react-icons/io5";
+
 
 const CottageDetails = () => {
   const { id } = useParams();
@@ -296,6 +296,12 @@ const CottageDetails = () => {
                 >
                   Book Now
                 </button>
+                <div className="flex items-center gap-1 text-gray-500">
+                  <HiExclamationCircle className="w-4 h-4"/>
+                <p className="text-xs  ">
+                      You will not be charged yet.
+                    </p>
+                    </div>
               </form>
             </div>
           </div>
@@ -312,7 +318,7 @@ const CottageDetails = () => {
                 {/* --- ADAPTED: Changed fallback to "cottage Manager" --- */}
                 Hosted by {cottage.providerName || "cottage Manager"}
               </h3>
-              <p className="text-gray-600 mt-1">Joined in 2023</p>
+              
               <button className="mt-4 px-6 py-2.5 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition flex items-center gap-2">
                 <HiOutlineChat className="w-5 h-5" />
                 Contact Host
@@ -321,6 +327,7 @@ const CottageDetails = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

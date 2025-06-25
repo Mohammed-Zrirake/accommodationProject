@@ -191,7 +191,13 @@ const HotelDetails=()=>{
           </div>
         </div>
       </div>
-        {allRooms.length >0 && <> <Title title="Rooms" align="left" />
+        {allRooms.length >0 && <> <div className="mb-10">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4">Rooms</h2>
+                            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                                There {allRooms.length > 1?`are ${allRooms.length} rooms`:
+                                `is one room`} available in this hotel.
+                            </p>
+                            </div>
         <div  className="mb-8 xl:p-6">
         {allRooms.map((room)=>(
             

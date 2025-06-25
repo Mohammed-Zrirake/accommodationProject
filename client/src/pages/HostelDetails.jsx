@@ -13,7 +13,8 @@ import {
   HiOutlineWifi,
  
   HiOutlineClock,
-  HiOutlineHome
+  HiOutlineHome,
+  HiCheck
 } from "react-icons/hi";
 import DormCard from "../components/DormCard"
 
@@ -64,16 +65,31 @@ const HostelDetails=()=>{
     );
   }
     const commonAmenities = [
-    { 
-      icon: <HiOutlineWifi className="w-5 h-5" />, 
-      name: "Free WiFi" 
-    },
-    
-    
-    { 
-      icon: <HiOutlineClock className="w-5 h-5" />, 
-      name: "24-Hour Front Desk" 
-    }
+    "Rooftop terrace",
+  "Outdoor swimming pool",
+  "Air conditioning",
+  "Private bathroom",
+  "Bathtub or shower",
+  "Breakfast",
+  "Free WiFi",
+  "24-hour front desk",
+  "Laundry service",
+  "Airport shuttle",
+  "Non-smoking rooms",
+  "Restaurant",
+  "Family rooms",
+  "Terrace",
+  "Safety deposit box",
+  "Toilet",
+  "Towels",
+  "Linen",
+  "Desk",
+  "Heating",
+  "Hairdryer",
+  "Wardrobe or closet",
+  "Clothes rack",
+  "Toilet paper",
+  "Board games/puzzles"
   ];
     return(
 <>
@@ -171,18 +187,19 @@ const HostelDetails=()=>{
 
         {/* Hostel Amenities */}
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Hotel Amenities</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Hostel Amenities</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             {commonAmenities.map((amenity, index) => (
               <div 
                 key={index} 
                 className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100"
               >
-                <div className="text-blue-600">{amenity.icon}</div>
-                <p className="text-gray-800">{amenity.name}</p>
+                <div className="text-blue-600"> <HiCheck className="w-5 h-5" /> 
+                  </div>
+                <p className="text-gray-800">{amenity}</p>
               </div>
             ))}
-            {hostelData.amenities?.map((amenity, index) => (
+            {hostelData.hostelAmenities?.map((amenity, index) => (
               <div 
                 key={`custom-${index}`} 
                 className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100"
@@ -196,7 +213,13 @@ const HostelDetails=()=>{
           </div>
         </div>
       </div>
-      {allRooms.length>0 && <><Title title="Private Rooms" align="left" />
+      {allRooms.length>0 && <><div className="mb-10">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4">Rooms</h2>
+                            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                                There {allRooms.length > 1?`are ${allRooms.length} rooms`:
+                                `is one room`} available in this hostel.
+                            </p>
+                            </div>
         <div  className="mb-8 xl:p-6">
         {allRooms?.map((room)=>(
             
@@ -205,7 +228,13 @@ const HostelDetails=()=>{
                     
         ))} </div></>}
         {allDorms.length>0 && <>
-        <Title title="Dorms" align="left" />
+        <div className="mb-10">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4">Dorms</h2>
+                            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                                There {allDorms.length > 1?`are ${allDorms.length} dorms`:
+                                `is one dorm`} available in this Hostel.
+                            </p>
+                            </div>
         <div  className="mb-8 xl:p-6">
         {allDorms?.map((dorm)=>(
             

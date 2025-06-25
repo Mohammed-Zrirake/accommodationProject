@@ -1,177 +1,11 @@
-/*import { useParams } from "react-router-dom"
-import { use, useEffect, useState } from "react"
-import { assets, facilityIcons, roomCommonData, roomsDummyData } from "../assets/assets"
-import StarRating from "../components/StarRating"
-import NavBar from "../components/NavBar"
 
-const RoomDetails=()=>{
-    const {id}=useParams()
-    const [room,setRoom]=useState(null)
-    const [hotel,setHotel]=useState(null)
-    const [mainImage,setMailImage]=useState(null)
-
-    useEffect(()=>{
-        fetch("https://localhost:7263/api/room/"+id).then(res=>{if(!res.ok){
-            throw new Error("Failed to fetch room data")}
-        return res.json();
-        }).then((data)=>{setRoom(data)}).catch(error =>{console.error(error)});
-        if(room){
-            setRoom(room);
-            fetch(`https://localhost:7263/api/hotel/${room.hotelId}`).then(res=>{if(!res.ok){
-                throw new Error("Failed to fetch hotel data")
-            } return res.json();}).then(data=>{setHotel(data)}).catch(error=>
-                {console.error("There was a problem with the fetch operation:", error)});
-            if(room.photos && room.photos.length>0){
-                setMailImage(room.photos[0])
-            }
-            else{
-                setMailImage(null)
-            }
-        }
-        else{
-            setRoom(null);
-            setMailImage(null);
-        }
-        room && setMailImage(room.photos[0])
-    },[])
-    if(room)
-    {return (
-<>
-    
-    <NavBar />    
-    
-    <div className="py-28 md:py-35 px-4 md:px-16 lg:px-24 xl:px-32 ">
-         <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
-            <h1 className="text-3xl md:text-4xl font-playfair">{hotel.name} 
-                <span className="font-inter text-sm" >({room.name}) </span> </h1>
-        </div>
-        <div className="flex items-center gap-2">
-            <p className="mt-4 font-serif text-gray-700">{`${room.AverageRating}/5`}</p>
-            <StarRating rating={room.AverageRating} />
-            
-        </div>
-     
-        <div className="flex items-center gap-1 text-gray-500 mt-2">
-        <img src={assets.locationIcon} alt="location icon" />
-        <p>{hotel.address.street} , {hotel.address.city}</p>
-        </div>
-      
-        <div className="flex flex-col lg:flex-row mt-6 gap-6 ">
-            <div className="lg:w-1/2 w-full">
-                <img src={mainImage} alt="Room image" className="w-full rounded-xl shadow-lg object-cover" />
-            </div>
-            <div className="grid grid-cols-2 gap-4 lg:w-1/2 w-full">
-                {room?.photos.length>1 && room.photos.map((image,index)=>{
-                    return(
-                        <img onClick={()=>{setMailImage(image)}}
-                        key={index} src={image} alt="Room image" className={`w-full rounded-xl shadow-md 
-                            object-cover cursor-pointer ${mainImage === image && 'outline-3 outline-orange-500'}`} />
-                    )
-                    
-                })}
-            </div>
-        </div>
-       
-        <div className="flex flex-col md:flex-row md:justify-between mt-10">
-            <div className="flex flex-col">
-                <h1 className="text-3xl md:text-4xl font-playfair">
-                    Experience Luxury Like Never Before
-                </h1>
-                <div className="flex flex-wrap items-center mt-3 mb-6 gap-4">
-                    {
-                        room.amenities.map((item,index)=>{
-                            return (
-                                <div key={index} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100">
-                                    
-                                    <p className="text-xs">
-                                    {item}
-                                    </p>
-                                </div>
-                                
-                            )
-                        })
-                    }
-                </div>
-            </div>
-          
-            <p className="text-2xl font-medium">{room.BasePricePerNight * 10} DH /night</p>
-        </div>
-        
-        <form className="flex flex-col md:flex-row items-start md:items-center justify-between 
-        bg-white shadow-[0px_0px_20px_rgba(0,0,0,0.15)] p-6 rounded-xl mx-auto mt-16 max-w-6xl">
-            <div className="flex flex-col flex-wrap md:flex-row items-start md:items-center gap-4 
-            md:gap-10 text-gray-500">
-                <div className="flex flex-col ">
-                    <label htmlFor="checkInDate" className="font-medium text-gray-800">Check In </label>
-                    <input type="date" id="checkInDate" placeholder="check In" 
-                    className="w-full rounded border border-gray-300 px-3 py-2 mt-1.5 outline-none" required />
-                </div>
-                <div className="flex flex-col ">
-                    <label htmlFor="checkOutDate" className="font-medium text-gray-800">Check Out </label>
-                    <input type="date" id="checkOutDate" placeholder="check Out" 
-                    className="w-full rounded border border-gray-300 px-3 py-2 mt-1.5 outline-none" required />
-                </div>
-                <div className="flex flex-col ">
-                    <label htmlFor="guests" className="font-medium text-gray-800">Guests </label>
-                    <input type="number" id="guests" placeholder="check Out" 
-                    className="max-w-20 rounded border border-gray-300 px-3 py-2 mt-1.5 outline-none" required />
-                </div>
-            </div>
-            <button type="submit" className="bg-primary hover:bg-primary-dull active:scale-95 
-            transition-all text-white rounded-md max-md:w-full max-md:mt-6 md:px-25
-            py-3 md:py-4 text-base cursor-pointer" >Book Now</button>
-        </form>
-        <div className="mt-25 space-y-4">
-            {
-                roomCommonData.map((spec,index)=>(
-                    <div key={index} className="flex items-start gap-2" >
-                        <img src={spec.icon} alt={`${spec.title} icon`} className="w-6.5" />
-                        <div>
-                            <p className="text-base">{spec.title}</p>
-                            <p className="text-gray-500">{spec.description} </p>
-                        </div>    
-                    </div>    
-                ))
-            }
-        </div>
-        <div className="max-w-6xl border-y border-gray-300 my-15 py-10 text-gray-500">
-            <p>Guests will be allocated on the ground floor according to availability.
-                You get a comfortable Two bedroom apartment has a true city feeling. The 
-                price quoted is for two guests, at the guests slot please mark the number of 
-                guests to get the exact price for groups. The Guests will be allocated ground 
-                floor according to availability. You get the comfortable two bedroom 
-                apartment has a true city feeling.
-            </p>
-        </div>
-        
-        <div className="flex flex-col items-start gap-4">
-            <div className="flex gap-4">
-                <img src={room.photos[0]} alt="Host" className="h-14 w-14 md:h-18 rounded-full" />
-                <div>
-                    <p>Hosted by {hotel.Provider.username}</p>
-                    <div className="flex gap-2">
-                        <p className="mt-4 font-serif text-gray-700">{`${hotel.AverageRating}/5`}</p>
-                        <StarRating rating={hotel.AverageRating} />
-                        
-                    </div>
-                    
-                </div>
-            </div>
-            <button className="px-6 py-2.5 mt-4 rounded text-white bg-primary 
-            hover:bg-blue-400 transition-all cursor-pointer">Contact Now</button>
-        </div>
-    </div>
-</>        
-    )}
-}
-export default RoomDetails
-*/
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { assets, facilityIcons } from "../assets/assets"; // Assuming roomCommonData is not essential or will be replaced
 import StarRating from "../components/StarRating";
 import NavBar from "../components/NavBar";
 import { HiLocationMarker, HiOutlineStar } from "react-icons/hi";
+import Footer from "../components/Footer";
 
 // Helper for image URLs
 const getImageUrl = (imageName) => `https://localhost:7263/images/${imageName}`;
@@ -195,7 +29,7 @@ const ErrorDisplay = ({ message }) => (
 const RoomDetails = () => {
     const { id } = useParams();
     const [room, setRoom] = useState(null);
-    const [hotel, setHotel] = useState(null);
+    const [property, setProperty] = useState(null);
     const [mainImage, setMainImage] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -203,7 +37,15 @@ const RoomDetails = () => {
     useEffect(() => {
         setLoading(true);
         setError(null);
-
+        const fetchPropertyData = async (type,id) => {
+            fetch(`https://localhost:7263/api/${type}/${id}`)
+                .then(res => {if(!res.ok) {throw new Error(`Failed to fetch prperty data (status: ${res.status})`)}
+            return res.json();}).then(Data => {
+                setProperty(Data);})
+                .catch(err => {setError
+                    (err.message); setLoading(false); console.error("There was a problem with the fetch operation:", err);});
+        };
+        
         fetch(`https://localhost:7263/api/room/${id}`)
             .then(res => {
                 if (!res.ok) {
@@ -218,24 +60,11 @@ const RoomDetails = () => {
                 } else {
                     setMainImage(assets.placeholderImage || 'https://via.placeholder.com/800x600?text=No+Image'); // Fallback
                 }
-                // Now fetch hotel data
-                return fetch(`https://localhost:7263/api/hotel/${roomData.hotelId}`);
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error(`Failed to fetch hotel data (status: ${res.status})`);
-                }
-                return res.json();
-            })
-            .then(hotelData => {
-                setHotel(hotelData);
+                roomData.hotelId? fetchPropertyData("hotel",roomData.hotelId): roomData.hostelId? fetchPropertyData("hostel",roomData.hostelId):
+                roomData.riadId? fetchPropertyData("riad",roomData.riadId) : setError("No hotel, hostel, or riad ID found in room data.");
                 setLoading(false);
             })
-            .catch(err => {
-                console.error("There was a problem with the fetch operation:", err);
-                setError(err.message);
-                setLoading(false);
-            });
+            
     }, [id]); // Re-fetch if id changes
 
     const handleThumbnailClick = (imageName) => {
@@ -260,12 +89,12 @@ const RoomDetails = () => {
         );
     }
 
-    if (!room || !hotel) {
+    if (!room || !property) {
         // This case should ideally be covered by loading/error states
         return (
             <>
                 <NavBar />
-                <ErrorDisplay message="Room or Hotel data is not available." />
+                <ErrorDisplay message="Room or property data is not available." />
             </>
         );
     }
@@ -273,7 +102,7 @@ const RoomDetails = () => {
     return (
         <>
             <NavBar />
-            <div className="py-20 md:py-28 px-4 sm:px-6 md:px-12 lg:px-24 xl:px-32 bg-gray-50 min-h-screen">
+            <div className="py-20 md:py-28 px-4 sm:px-6 md:px-12 lg:px-24 xl:px-32 bg-white/75 min-h-screen">
                 <div className="max-w-7xl mx-auto">
                     {/* Header Section */}
                     <div className="mb-8"> {/* Increased bottom margin for more breathing room */}
@@ -281,7 +110,7 @@ const RoomDetails = () => {
         {room.name}
     </h1>
     <p className="text-lg md:text-xl text-gray-700 font-inter mt-1"> {/* Slightly larger, more distinct from title */}
-        Part of <span className="font-semibold text-primary">{hotel.name}</span> {/* Using 'Part of' or 'In' can feel more integrated, highlight hotel name */}
+        Part of <span className="font-semibold text-primary">{property.name}</span> {/* Using 'Part of' or 'In' can feel more integrated, highlight hotel name */}
     </p>
     <div className="flex flex-wrap items-center gap-4 mt-3">
   {room.averageRating > 0 && (
@@ -304,21 +133,21 @@ const RoomDetails = () => {
     <HiLocationMarker className="w-5 h-5 flex-shrink-0" />
     <a
       href={`https://maps.google.com/?q=${encodeURIComponent(
-        hotel.address.street +
+        property.address.street +
           ", " +
-          hotel.address.city +
-          (hotel.address.postalCode ? ", " + hotel.address.postalCode : "") +
+          property.address.city +
+          (property.address.postalCode ? ", " + property.address.postalCode : "") +
           ", " +
-          hotel.address.country
+          property.address.country
       )}`}
       target="_blank"
       rel="noopener noreferrer"
       className="text-sm md:text-base hover:underline hover:text-primary transition-colors duration-150"
     >
-      {hotel.address.street}, {hotel.address.city}
-      {hotel.address.stateOrProvince && `, ${hotel.address.stateOrProvince}`}
-      {hotel.address.postalCode && `, ${hotel.address.postalCode}`}
-      , {hotel.address.country}
+      {property.address.street}, {property.address.city}
+      {property.address.stateOrProvince && `, ${property.address.stateOrProvince}`}
+      {property.address.postalCode && `, ${property.address.postalCode}`}
+      , {property.address.country}
     </a>
   </div>
 </div>
@@ -449,19 +278,19 @@ const RoomDetails = () => {
 
                     {/* Hosted by Section - Refined */}
                     <div className="mt-12 pt-8 border-t border-gray-200">
-                        <h2 className="text-2xl font-playfair xl:text-3xl font-semibold text-gray-800 mb-4">Hosted by <span className="font-medium text-purple-900">{hotel.name}</span></h2>
+                        <h2 className="text-2xl font-playfair xl:text-3xl font-semibold text-gray-800 mb-4">Hosted by <span className="font-medium text-purple-900">{property.name}</span></h2>
                         <div className="flex items-center gap-4">
                             <img
-                                src={hotel.photos && hotel.photos.length > 0 ? getImageUrl(hotel.photos[0]) : 'https://via.placeholder.com/100?text=Host'}
-                                alt={`Host: ${hotel.name}`}
+                                src={property.photos && property.photos.length > 0 ? getImageUrl(property.photos[0]) : 'https://via.placeholder.com/100?text=Host'}
+                                alt={`Host: ${property.name}`}
                                 className="h-16 w-16 md:h-20 md:w-20 rounded-full object-cover shadow-md"
                             />
                             <div>
-                                <p className="text-lg font-semibold text-gray-800">{hotel.name}</p>
-                                {hotel.starRating > 0 && (
+                                <p className="text-lg font-semibold text-gray-800">{property.name}</p>
+                                {property.starRating > 0 && (
                                      <div className="flex items-center gap-1 -mt-1.5">
-                                        <StarRating rating={hotel.starRating} small />
-                                        <p className="text-xs text-gray-600 mt-4">({hotel.starRating}-star property)</p>
+                                        <StarRating rating={property.starRating} small />
+                                        <p className="text-xs text-gray-600 mt-4">({property.starRating}-star property)</p>
                                     </div>
                                 )}
                                 
@@ -471,18 +300,12 @@ const RoomDetails = () => {
                             Contact Host
                         </button> }
                          {/* Description of Hotel (if you want to show it here) */}
-                        {hotel.description && (
-                            <div className="mt-6">
-                                <h3 className="text-xl font-playfair xl:text-2xl font-semibold text-gray-800 mb-2">About the Hotel</h3>
-                                <p className="text-gray-700 font-inter leading-relaxed whitespace-pre-line text-sm xl:text-base">
-                                    {hotel.description.split('\n\n')[0]} {/* Show first paragraph or summary */}
-                                </p>
-                            </div>
-                        )}
+                        
                     </div>
 
                 </div>
             </div>
+            <Footer />
         </>
     );
 };
