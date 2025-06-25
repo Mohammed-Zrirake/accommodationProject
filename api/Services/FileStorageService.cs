@@ -83,8 +83,9 @@ namespace api.Services
         }
         public async Task DeleteAllFilesAsync(List<string> fileNames)
         {
-            if (fileNames == null || !fileNames.Any())
+            if (fileNames == null || fileNames.Count == 0)
             {
+                
                 return;
             }
 

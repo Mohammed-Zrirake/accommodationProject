@@ -11,8 +11,10 @@ import {
   HiOutlineCalendar,
   HiOutlineUser,
   HiOutlineChat,
-  HiOutlineStar
+  HiOutlineStar,
+  HiExclamationCircle
 } from "react-icons/hi";
+import Footer from "../components/Footer";
 
 const ApartmentDetails = () => {
   const { id } = useParams();
@@ -232,7 +234,7 @@ const ApartmentDetails = () => {
             {/* Rules */}
             {apartment.rules && (
               <div className="mb-10">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">House Rules</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Apartment Rules</h2>
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                   <p className="text-gray-700">{apartment.rules}</p>
                 </div>
@@ -306,6 +308,12 @@ const ApartmentDetails = () => {
                 >
                   Book Now
                 </button>
+                <div className="flex items-center gap-1 text-gray-500">
+                                  <HiExclamationCircle className="w-4 h-4"/>
+                                <p className="text-xs  ">
+                                      You will not be charged yet.
+                                    </p>
+                                    </div>
               </form>
             </div>
           </div>
@@ -329,6 +337,7 @@ const ApartmentDetails = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </>
   );
 };

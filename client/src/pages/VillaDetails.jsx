@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import NavBar from "../components/NavBar"; // Assuming you have this component
-import StarRating from "../components/StarRating"; // Assuming you have this component
-
+import NavBar from "../components/NavBar";
+import StarRating from "../components/StarRating"; 
+import Footer from "../components/Footer";
 import { 
   HiLocationMarker, 
   HiHome, 
@@ -12,7 +12,8 @@ import {
   HiOutlineUser,
   HiOutlineChat,
   HiOutlineStar,
-  HiOutlineExclamationCircle // For error state
+  HiOutlineExclamationCircle, // For error state
+  HiExclamationCircle
 } from "react-icons/hi";
 
 // New icons that might be relevant for a villa
@@ -235,7 +236,7 @@ const VillaDetails = () => {
             {/* Rules Section - Will not render as rules is null */}
             {villa.rules && (
               <div className="mb-10 pt-6 mt-6 border-t border-gray-200">
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">House Rules</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Villa Rules</h2>
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                   <p className="text-gray-700">{villa.rules}</p>
                 </div>
@@ -305,6 +306,12 @@ const VillaDetails = () => {
                 >
                   Book Now
                 </button>
+                <div className="flex items-center gap-1 text-gray-500">
+                <HiExclamationCircle className="w-4 h-4"/>
+                <p className="text-xs  ">
+                You will not be charged yet.
+                </p>
+                </div>
               </form>
             </div>
           </div>
@@ -321,15 +328,17 @@ const VillaDetails = () => {
                 {/* --- ADAPTED: Changed fallback to "Villa Manager" --- */}
                 Hosted by {villa.providerName || "Villa Manager"}
               </h3>
-              <p className="text-gray-600 mt-1">Joined in 2023</p>
+              
               <button className="mt-4 px-6 py-2.5 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition flex items-center gap-2">
                 <HiOutlineChat className="w-5 h-5" />
                 Contact Host
               </button>
+
             </div>
           </div>
         </div>
       </div>
+      <Footer/>
     </>
   );
 };

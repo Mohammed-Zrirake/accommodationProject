@@ -4,6 +4,7 @@ import { assets, facilityIcons } from "../assets/assets"; // Assuming dormCommon
 import StarRating from "../components/StarRating";
 import NavBar from "../components/NavBar";
 import { HiLocationMarker, HiOutlineStar } from "react-icons/hi";
+import Footer from "../components/Footer";
 
 // Helper for image URLs
 const getImageUrl = (imageName) => `https://localhost:7263/images/${imageName}`;
@@ -105,7 +106,7 @@ const DormDetails = () => {
     return (
         <>
             <NavBar />
-            <div className="py-20 md:py-28 px-4 sm:px-6 md:px-12 lg:px-24 xl:px-32 bg-gray-50 min-h-screen">
+            <div className="py-20 md:py-28 px-4 sm:px-6 md:px-12 lg:px-24 xl:px-32 bg-white/75 min-h-screen">
                 <div className="max-w-7xl mx-auto">
                     {/* Header Section */}
                     <div className="mb-8"> {/* Increased bottom margin for more breathing dorm */}
@@ -304,6 +305,7 @@ const DormDetails = () => {
 
                 </div>
             </div>
+            <Footer />
         </>
     );
 };

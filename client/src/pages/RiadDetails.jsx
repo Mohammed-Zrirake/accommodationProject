@@ -5,7 +5,7 @@ import Title from "../components/title"
 
 import { useNavigate, useParams } from "react-router-dom"
 import RoomCard from "../components/RoomCard"
-import { HiLocationMarker, HiOutlineHome, HiOutlineStar } from "react-icons/hi"
+import { HiLocationMarker, HiOutlineHome, HiOutlineStar,HiCheck  } from "react-icons/hi"
 
 const RiadDetails=()=>{
     
@@ -16,6 +16,21 @@ const RiadDetails=()=>{
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [mainImage, setMainImage] = useState("");
+    const riadCommonAmenities = [
+  "Free WiFi",
+  "Air conditioning",
+  "Private bathrooms", 
+  "Bathrobes",
+  "Hairdryer",
+  "Free toiletries",
+  "Shower",
+  "Slippers",
+  "Wardrobe",
+  "Breakfast", 
+  "Heating", 
+  "Towels",  
+  "Linen"    
+];
     const getImageUrl = (imageName) => `https://localhost:7263/images/${imageName}`;
     
     useEffect(()=>{
@@ -149,28 +164,34 @@ const RiadDetails=()=>{
                         </div>
 
                         {/* Riad Amenities */}
-                        {/*.Amenities.length>0 &&<div className="mb-12">
+                        {riadCommonAmenities.length>0 &&<div >
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">Riad Amenities</h2>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                                {riadData.Amenities?.map((amenity, index) => (
+                                {riadCommonAmenities?.map((amenity, index) => (
                                     <div 
                                         key={`custom-${index}`} 
                                         className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100"
                                     >
                                         <div className="text-blue-600">
-                                            <HiOutlineHome className="w-5 h-5" />
+                                            <HiCheck  className="w-5 h-5" />
                                         </div>
-                                        <p className="text-gray-800">{amenity.name}</p>
+                                        <p className="text-gray-800">{amenity}</p>
                                     </div>
                                 ))}
                             </div>
-                        </div>*/}
+                        </div>}
                     </div>
 
                     {/* Rooms Section */}
                     {allRooms.length > 0 && (
                         <>
-                            <Title title="Rooms" align="left" />
+                            <div className="mb-10">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-4">Rooms</h2>
+                            <p className="text-gray-700 leading-relaxed whitespace-pre-line">
+                                There {allRooms.length > 1?`are ${allRooms.length} rooms`:
+                                `is one room`} available in this Riad.
+                            </p>
+                            </div>
                             <div className="mb-8 xl:p-6">
                                 {allRooms.map((room) => (
                                     <RoomCard hotelData={riadData} room={room} key={room.id} />

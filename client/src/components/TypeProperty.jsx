@@ -4,6 +4,7 @@ import Title from "./title"
 
 const TypeProperty=()=>{
     const navigate=useNavigate()
+    
     return(
         <>
         <Title title="Browse by property type" />
