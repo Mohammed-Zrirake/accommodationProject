@@ -20,8 +20,8 @@ namespace api.Models
         public bool IsEdited { get; set; }
         public bool IsApproved { get; set; }
 
-
-        public Guid AuthorId { get; set; }
+        [Required]
+        public string AuthorId { get; set; }
         [ForeignKey("AuthorId")]
         public virtual User Author { get; set; } = null!;
 

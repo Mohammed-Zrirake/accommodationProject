@@ -14,7 +14,8 @@ namespace api.Models
         [Key]
         public Guid LikeId { get; set; } 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public Guid UserId { get; set; }
+        [Required]
+        public string UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual User User { get; set; } = null!;
         public Guid AccommodationId { get; set; }

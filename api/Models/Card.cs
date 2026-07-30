@@ -27,8 +27,8 @@ namespace api.Models
         public string? CardType { get; set; } // VISA, MASTERCARD
         public bool IsDefault { get; set; }
 
-
-        public Guid UserId { get; set; }
+        [Required]
+        public string UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual User User { get; set; } = null!;
 

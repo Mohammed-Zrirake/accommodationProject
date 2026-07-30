@@ -19,7 +19,7 @@ const FeaturedDestination=()=>{
     const [cottageData, setCottageData] = useState([]);
     const [villaData, setVillaData] = useState([]);
     useEffect(()=>{
-        fetch('https://localhost:7263/api/hotel').then
+        fetch('http://localhost:5073/api/hotel').then
         (res=>{if(!res.ok){
             throw new Error("Failed to fetch hotel data")
         }
@@ -28,7 +28,7 @@ const FeaturedDestination=()=>{
         console.log(data)}).catch(error=>
             {console.error("There was a problem with the fetch operation:", error)})},[])
             useEffect(()=>{
-        fetch('https://localhost:7263/api/hostel').then
+        fetch('http://localhost:5073/api/hostel').then
         (res=>{if(!res.ok){
             throw new Error("Failed to fetch hotel data")
         }
@@ -37,7 +37,7 @@ const FeaturedDestination=()=>{
         console.log(data)}).catch(error=>
             {console.error("There was a problem with the fetch operation:", error)})},[]);
             useEffect(()=>{
-        fetch('https://localhost:7263/api/riad').then
+        fetch('http://localhost:5073/api/riad').then
         (res=>{if(!res.ok){
             throw new Error("Failed to fetch hotel data")
         }
@@ -46,7 +46,7 @@ const FeaturedDestination=()=>{
         console.log(data)}).catch(error=>
             {console.error("There was a problem with the fetch operation:", error)})},[]);
             useEffect(()=>{
-        fetch('https://localhost:7263/api/villa').then
+        fetch('http://localhost:5073/api/villa').then
         (res=>{if(!res.ok){
             throw new Error("Failed to fetch hotel data")
         }
@@ -55,7 +55,7 @@ const FeaturedDestination=()=>{
         console.log(data)}).catch(error=>
             {console.error("There was a problem with the fetch operation:", error)})},[]);
             useEffect(()=>{
-        fetch('https://localhost:7263/api/appartment').then
+        fetch('http://localhost:5073/api/appartment').then
         (res=>{if(!res.ok){
             throw new Error("Failed to fetch hotel data")
         }
@@ -64,7 +64,7 @@ const FeaturedDestination=()=>{
         console.log(data)}).catch(error=>
             {console.error("There was a problem with the fetch operation:", error)})},[]);
         useEffect(()=>{
-        fetch('https://localhost:7263/api/cottage').then
+        fetch('http://localhost:5073/api/cottage').then
         (res=>{if(!res.ok){
             throw new Error("Failed to fetch hotel data")
         }
@@ -183,7 +183,7 @@ const FeaturedDestination=()=>{
             </div>}
            {appartementData.length>0 && <div className='flex flex-col items-center  px-6 md:px-16 lg:px-24 bg-slate-50'>
             <div className="text-left space-y-2 mt-8 xl:mt-10">
-  <h1 className="text-2xl font-bold text-gray-900 xl:text-3xl">Stay at our stylish Moroccan apartments</h1>
+  <h1 className="text-2xl font-bold text-gray-900 xl:text-3xl">Stay at our stylish Moroccan appartments</h1>
   <p className="text-gray-600">Live like a local with comfort, design, and cultural flair.</p>
 </div>
 

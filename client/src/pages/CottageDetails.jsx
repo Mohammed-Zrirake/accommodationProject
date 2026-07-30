@@ -2,22 +2,20 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NavBar from "../components/NavBar"; 
 import StarRating from "../components/StarRating"; 
+import BookingCard from "../components/BookingCard"; // Added import
 import Footer from "../components/Footer"; 
 import { 
   HiLocationMarker, 
-  
   HiOutlineHome, 
   HiOutlineUserGroup,
-
   HiOutlineChat,
   HiOutlineStar,
   HiOutlineExclamationCircle // For error state
 } from "react-icons/hi";
 
-import { HiExclamationCircle } from "react-icons/hi"; 
+// Removed HiExclamationCircle import (now used in BookingCard)
 import { GiBathtub } from "react-icons/gi";
 import { IoBedOutline } from "react-icons/io5";
-
 
 const CottageDetails = () => {
   const { id } = useParams();
@@ -26,13 +24,17 @@ const CottageDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Helper function to get image URL (ensure this matches your server setup)
+  // Booking success handler (placeholder)
+  const ActionOnBookingSuccess = () => {
+    // pass
+  };
+
+  // Helper function to get image URL
   const getImageUrl = (imageName) => `https://localhost:7263/images/${imageName}`;
 
   useEffect(() => {
     const fetchcottage = async () => {
       try {
-        // --- ADAPTED: Fetch from the cottage API endpoint ---
         const response = await fetch(`https://localhost:7263/api/cottage/${id}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch cottage (status: ${response.status})`);
@@ -82,8 +84,6 @@ const CottageDetails = () => {
     );
   }
 
-  // --- ADAPTED: cottage features to display ---
-  // Removed 'floorNumber' and used cottage-specific icons
   const cottageFeatures = [
     { 
       icon: <IoBedOutline className="w-6 h-6" />, 
@@ -114,7 +114,6 @@ const CottageDetails = () => {
           </h1>
           
           <div className="flex flex-wrap items-center gap-4 mt-3">
-            {/* This part will be hidden as `averageRating` is not in the cottage object */}
             {cottage.averageRating > 0 && (
               <div className="flex items-center gap-2">
                 <StarRating rating={cottage.averageRating} />
@@ -134,6 +133,8 @@ const CottageDetails = () => {
             </div>
           </div>
         </div>
+
+        {/* Image Gallery */}
         <div className="flex flex-col lg:flex-row gap-6 mb-10">
           <div className="lg:w-1/2">
             <img 
@@ -159,22 +160,20 @@ const CottageDetails = () => {
             ))}
           </div>
         </div>
-        {/* Image Gallery */}
-        
 
-        {/* --- ADAPTED: Optional additional image grid --- */}
+        {/* Additional images if more than 5 */}
         {cottage.photos.length > 5 && (
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-10">
-                {cottage.photos.slice(5).map((photo, index) => (
-                    <img
-                        key={index}
-                        src={getImageUrl(photo)}
-                        alt={`cottage view ${index + 6}`}
-                        className="w-full h-40 object-cover rounded-lg cursor-pointer transition-all hover:opacity-90"
-                        onClick={() => setMainImage(getImageUrl(photo))}
-                    />
-                ))}
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 mb-10">
+            {cottage.photos.slice(5).map((photo, index) => (
+              <img
+                key={index}
+                src={getImageUrl(photo)}
+                alt={`cottage view ${index + 6}`}
+                className="w-full h-40 object-cover rounded-lg cursor-pointer transition-all hover:opacity-90"
+                onClick={() => setMainImage(getImageUrl(photo))}
+              />
+            ))}
+          </div>
         )}
 
         {/* Details and Booking Section */}
@@ -184,7 +183,7 @@ const CottageDetails = () => {
             {/* Features */}
             <div className="mb-10">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                cottage Features
+                Cottage Features
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {cottageFeatures.map((feature, index) => (
@@ -208,22 +207,22 @@ const CottageDetails = () => {
               </p>
             </div>
             
-            {/* Amenities Section - Will not render as amenities array is empty */}
+            {/* Amenities */}
             {cottage?.amenities?.length > 0 && (
-                <div className="border-t border-gray-200 pt-6 mt-6">
-                    <h3 className="text-2xl font-semibold mb-4">What this place offers</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-y-3">
-                    {cottage.amenities.map((item, index) => (
-                        <div key={index} className="flex items-center gap-3">
-                            <HiOutlineStar className="h-5 w-5 text-green-500" />
-                            <p>{typeof item === 'string' ? item : item?.name ?? 'Unnamed Amenity'}</p>
-                        </div>
-                    ))}
+              <div className="border-t border-gray-200 pt-6 mt-6">
+                <h3 className="text-2xl font-semibold mb-4">What this place offers</h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-y-3">
+                  {cottage.amenities.map((item, index) => (
+                    <div key={index} className="flex items-center gap-3">
+                      <HiOutlineStar className="h-5 w-5 text-green-500" />
+                      <p>{typeof item === 'string' ? item : item?.name ?? 'Unnamed Amenity'}</p>
                     </div>
+                  ))}
                 </div>
+              </div>
             )}
 
-            {/* Rules Section - Will not render as rules is null */}
+            {/* Rules */}
             {cottage.rules && (
               <div className="mb-10 pt-6 mt-6 border-t border-gray-200">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">House Rules</h2>
@@ -234,76 +233,15 @@ const CottageDetails = () => {
             )}
           </div>
 
-          {/* Right Column - Booking Form */}
+          {/* Right Column - Booking Card (replaces the old form) */}
           <div className="lg:w-1/3">
-            <div className="bg-white shadow-xl rounded-xl p-6 sticky top-24">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <p className="text-2xl font-bold text-blue-600">
-                    {cottage.basePricePerNight} DH
-                  </p>
-                  <p className="text-gray-600">per night</p>
-                </div>
-                {cottage.averageRating > 0 && (
-                  <div className="flex items-center gap-1">
-                    <HiOutlineStar className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                    <span className="font-medium">{cottage.averageRating.toFixed(1)}</span>
-                  </div>
-                )}
-              </div>
-              
-              <form className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-gray-800 mb-2 flex items-center gap-2">
-                      Check In
-                    </label>
-                    <input 
-                      type="date" 
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-800 mb-2 flex items-center gap-2">
-                      Check Out
-                    </label>
-                    <input 
-                      type="date" 
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                    <label className="text-sm font-medium text-gray-800 mb-2 flex items-center gap-2">
-                      Guests
-                    </label>
-                    <input 
-                      type="number" 
-                      min="1"
-                      max={cottage.capacity}
-                      defaultValue="1"
-                      className="w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Max capacity: {cottage.capacity} guests
-                    </p>
-                </div>
-                
-                <button 
-                  type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-lg transition duration-300 flex items-center justify-center gap-2 mt-2"
-                >
-                  Book Now
-                </button>
-                <div className="flex items-center gap-1 text-gray-500">
-                  <HiExclamationCircle className="w-4 h-4"/>
-                <p className="text-xs  ">
-                      You will not be charged yet.
-                    </p>
-                    </div>
-              </form>
-            </div>
+            <BookingCard 
+                accommondationId={cottage.id} 
+                unitType="accommodation"
+              capacity={cottage.capacity} 
+              basePrice={cottage.basePricePerNight} 
+              onBookingSuccess={ActionOnBookingSuccess} 
+            />
           </div>
         </div>
 
@@ -315,10 +253,8 @@ const CottageDetails = () => {
             </div>
             <div>
               <h3 className="text-xl font-bold text-gray-900">
-                {/* --- ADAPTED: Changed fallback to "cottage Manager" --- */}
-                Hosted by {cottage.providerName || "cottage Manager"}
+                Hosted by {cottage.providerName || "Cottage Manager"}
               </h3>
-              
               <button className="mt-4 px-6 py-2.5 rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition flex items-center gap-2">
                 <HiOutlineChat className="w-5 h-5" />
                 Contact Host

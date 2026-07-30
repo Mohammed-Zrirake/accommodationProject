@@ -15,8 +15,9 @@ namespace api.Models
         public Guid WishlistId { get; set; } // Renommé
 
         // Relation 1-1 avec User. WishlistId est la PK. UserId est la FK.
-        [ForeignKey("User")]
-        public Guid UserId { get; set; }
+        [Required]
+        public string UserId { get; set; }
+        [ForeignKey(nameof(UserId))]
         
         public virtual User User { get; set; } = null!;
 

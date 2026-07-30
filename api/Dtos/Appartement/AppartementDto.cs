@@ -23,7 +23,7 @@ namespace api.Dtos.Appartement
         // Properties from Accommodation
         public Address Address { get; set; } = new Address();
         public AccommodationStatus Status { get; set; }
-        public Guid ProviderId { get; set; }
+        public string ProviderId { get; set; }
         public string ProviderName { get; set; } = string.Empty; // Flattened for convenience
 
         // Properties from Appartement

@@ -23,7 +23,7 @@ namespace api.Dtos.Villa
         // CHANGE: Using a many-to-many relationship for amenities
         public List<Guid> AmenityIds { get; set; } = new List<Guid>();
         public Address Address { get; set; } = new Address();
-        public Guid ProviderId { get; set; }
+        public string ProviderId { get; set; }
         public int NumberOfBedrooms { get; set; }
         public int NumberOfBathrooms { get; set; }
     }

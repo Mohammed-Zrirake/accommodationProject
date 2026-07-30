@@ -9,6 +9,8 @@ using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace api.Controllers
 {
@@ -46,12 +48,14 @@ namespace api.Controllers
             return Ok(hotel.ToHotelDto());
         }
         [HttpPost]
+        [Authorize(Roles = "owner,admin")]
         public async Task<IActionResult> CreateHotel([FromForm] CreateHotelRequestDto hotelDto)
         {
             try
             {
                 var images = await fileStorage.SaveAllFilesAsync(hotelDto.Photos);
                 var hotel = hotelDto.ToHotelFromCreateDto(images);
+                hotel.ProviderId = User.FindFirstValue("sub")!;
 
                 hotel.Rooms = new List<Room>(); // Leave rooms empty on creation
 

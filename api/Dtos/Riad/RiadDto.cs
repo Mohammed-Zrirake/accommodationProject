@@ -21,7 +21,7 @@ namespace api.Dtos.Riad
         public bool TraditionalDecor { get; set; }
 
         // Flattened Provider information for convenience
-        public Guid ProviderId { get; set; }
+        public string ProviderId { get; set; }
         public string ProviderName { get; set; } = string.Empty;
         public  List<AmenityDto> Amenities { get; set; } = new List<AmenityDto>();
 

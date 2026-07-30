@@ -23,6 +23,6 @@ namespace api.Dtos.Hostel
         public int StarRating { get; set; }
         public virtual ICollection<Guid> HostelAmenityIds { get; set; } = new List<Guid>();
         
-        public Guid ProviderId { get; set; }
+        public string ProviderId { get; set; }
     }
 }

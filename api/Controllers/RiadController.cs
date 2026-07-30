@@ -8,6 +8,8 @@ using api.IServices;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace api.Controllers
 {
@@ -57,6 +59,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "owner,admin")]
         public async Task<IActionResult> CreateRiad([FromForm] CreateRiadRequestDto riadDto)
         {
             if (!ModelState.IsValid)
@@ -69,6 +72,7 @@ namespace api.Controllers
                 var imageUrls = await _fileStorage.SaveAllFilesAsync(riadDto.Photos, "riads");
 
                 var riad = riadDto.ToRiadFromCreateDto(imageUrls);
+                riad.ProviderId = User.FindFirstValue("sub")!;
 
                 await _context.Riads.AddAsync(riad);
                 await _context.SaveChangesAsync();

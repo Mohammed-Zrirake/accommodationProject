@@ -34,7 +34,7 @@ namespace api.Dtos.Cottage
         public Address Address { get; set; } = new Address();
 
         [Required]
-        public Guid ProviderId { get; set; }
+        public string ProviderId { get; set; }
 
         // Properties from Cottage
         [Required]

@@ -39,7 +39,8 @@ namespace api.Models
         public virtual Room? Room { get; set; }
         [ForeignKey("DormId")]
         public virtual Dorm? Dorm { get; set; }
-        public Guid UserId { get; set; }
+        [Required]
+        public string UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual User User { get; set; } = null!;
         public virtual Payment? Payment { get; set; }

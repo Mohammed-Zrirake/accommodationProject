@@ -15,12 +15,8 @@ namespace api.Mappers
             {
                 UserId = userModel.UserId,
                 Username = userModel.Username,
-                FirstName = userModel.FirstName,
-                LastName = userModel.LastName,
                 Email = userModel.Email,
-                PhoneNumber = userModel.PhoneNumber,
                 RegistrationDate = userModel.RegistrationDate,
-                IsActive = userModel.IsActive
             };
         }
 
@@ -29,10 +25,7 @@ namespace api.Mappers
             return new User
             {
                 Username = userDto.Username,
-                FirstName = userDto.FirstName,
-                LastName = userDto.LastName,
                 Email = userDto.Email,
-                PhoneNumber = userDto.PhoneNumber,
             };
         }
     }

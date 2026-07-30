@@ -7,6 +7,8 @@ using api.Dtos.Hostel;
 using api.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using api.Mappers;
 using api.Models;
 
@@ -46,12 +48,14 @@ namespace api.Controllers
             return Ok(hostel);
         }
         [HttpPost]
+        [Authorize(Roles = "owner,admin")]
         public async Task<IActionResult> CreateHostel([FromForm] CreateHostelRequestDto hostelDto)
         {
             try
             {
                 var images = await fileStorage.SaveAllFilesAsync(hostelDto.Photos);
                 var hostel = hostelDto.ToHostelFromCreateDto(images);
+                hostel.ProviderId = User.FindFirstValue("sub")!;
 
                 hostel.PrivateRooms = new List<Room>(); // Leave rooms empty on creation
 

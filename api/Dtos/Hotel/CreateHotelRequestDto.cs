@@ -25,7 +25,7 @@ namespace api.Dtos.Hotel
 
         
 
-        public Guid ProviderId { get; set; }
+        public string ProviderId { get; set; }
         
     }
 }

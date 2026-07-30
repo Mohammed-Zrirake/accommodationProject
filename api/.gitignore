@@ -1,0 +1,24 @@
+# ============================================
+# 🧱 ASP.NET API — api/.gitignore
+# ============================================
+
+# Build output
+bin/
+obj/
+
+# User secrets & dev config
+secrets.json
+
+# SQLite database files (comment out if you want to track them)
+# *.db
+# *.db-shm
+# *.db-wal
+
+# Backups
+backups/
+
+# IDE
+*.user
+*.suo
+.vscode/
+.idea/

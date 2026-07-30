@@ -6,4 +6,7 @@ export default defineConfig({
   plugins: [react(),
             tailwindcss()
   ],
+  ssr: {
+    noExternal: ['@clerk/react-router'],
+  },
 })

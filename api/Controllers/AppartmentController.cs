@@ -9,6 +9,8 @@ using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace api.Controllers
 {
@@ -81,6 +83,7 @@ namespace api.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "owner,admin")]
         public async Task<IActionResult> CreateAppartement([FromForm] CreateAppartementRequestDto appartementDto)
         {
             if (!ModelState.IsValid)
@@ -88,7 +91,7 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
             var appartement = appartementDto.ToAppartementFromCreateDto(new List<string>());
-            appartement.ProviderId = new Guid("B4FE4FA2-8F1C-42A4-8FCE-6ED3B40EFE37");
+            appartement.ProviderId = User.FindFirstValue("sub")!;
 
             try
             {

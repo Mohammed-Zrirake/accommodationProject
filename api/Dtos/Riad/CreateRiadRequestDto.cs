@@ -31,7 +31,7 @@ namespace api.Dtos.Riad
 
         // The ID of the user creating the Riad
         [Required]
-        public Guid ProviderId { get; set; }
+        public string ProviderId { get; set; }
     }
 }
 }

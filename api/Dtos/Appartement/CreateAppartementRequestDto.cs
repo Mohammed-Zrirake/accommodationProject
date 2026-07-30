@@ -29,6 +29,6 @@ namespace api.Dtos.Appartement
         public int NumberOfBathrooms { get; set; }
         public int? FloorNumber { get; set; }
         public List<Guid> AmenityIds { get; set; } = new List<Guid>();
-        public Guid ProviderId { get; set; }
+        public string ProviderId { get; set; }
     }
 }

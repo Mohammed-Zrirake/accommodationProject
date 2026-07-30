@@ -26,7 +26,8 @@ namespace api.Models
         public virtual ICollection<Dorm> Dorms { get; set; } = new List<Dorm>();
         // A hostel can also have private rooms
         public virtual ICollection<Room> PrivateRooms { get; set; } = new List<Room>();
-        public Guid ProviderId { get; set; }
+        [Required]
+        public string ProviderId { get; set; }
         [ForeignKey("ProviderId")]
         public virtual User Provider { get; set; } = null!;
     }

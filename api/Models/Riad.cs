@@ -32,7 +32,8 @@ namespace api.Models
     public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
     public virtual ICollection<Amenity> Amenities { get; set; } = new List<Amenity>();
     // Foreign Key for the Provider
-    public Guid ProviderId { get; set; }
+    [Required]
+    public string ProviderId { get; set; }
     [ForeignKey("ProviderId")]
     public virtual User Provider { get; set; } = null!;
 }

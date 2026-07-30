@@ -9,6 +9,8 @@ using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace api.Controllers
 {
@@ -47,6 +49,7 @@ namespace api.Controllers
             return Ok(villa.ToVillaDto());
         }
         [HttpPost]
+        [Authorize(Roles = "owner,admin")]
         public async Task<IActionResult> CreateVilla([FromForm] CreateVillaRequestDto villaDto)
         {
             if (!ModelState.IsValid)
@@ -54,6 +57,7 @@ namespace api.Controllers
                 return BadRequest(ModelState);
             }
             var villa = villaDto.ToVillaRequestDto();
+            villa.ProviderId = User.FindFirstValue("sub")!;
 
             try
             {

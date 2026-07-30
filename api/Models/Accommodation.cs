@@ -15,7 +15,8 @@ namespace api.Models
         public AccommodationStatus Status { get; set; } = AccommodationStatus.PENDING_APPROVAL;
 
         // Foreign Key for the Provider (owner)
-        public Guid ProviderId { get; set; }
+        [Required]
+        public string ProviderId { get; set; }
         [ForeignKey("ProviderId")]
         public virtual User Provider { get; set; } = null!;
 

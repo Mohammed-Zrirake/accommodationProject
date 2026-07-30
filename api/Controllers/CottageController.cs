@@ -8,6 +8,8 @@ using api.IServices;
 using api.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace api.Controllers
 {
@@ -53,6 +55,7 @@ namespace api.Controllers
             return Ok(cottage.ToCottageDto());
         }
         [HttpPost]
+        [Authorize(Roles = "owner,admin")]
         public async Task<IActionResult> Create([FromForm] CreateCottageRequestDto cottageDto)
         {
             if (!ModelState.IsValid)
@@ -66,6 +69,7 @@ namespace api.Controllers
                 var imageUrls = await _fileStorage.SaveAllFilesAsync(cottageDto.Photos, "cottages");
 
                 var cottage = cottageDto.ToCottageFromCreateDto(imageUrls);
+                cottage.ProviderId = User.FindFirstValue("sub")!;
 
                 await _context.Cottages.AddAsync(cottage);
                 await _context.SaveChangesAsync();

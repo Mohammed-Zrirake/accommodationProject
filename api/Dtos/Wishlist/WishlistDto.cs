@@ -9,7 +9,7 @@ namespace api.Dtos.Wishlist
     public class WishlistDto
     {
         public Guid WishlistId { get; set; }
-        public Guid UserId { get; set; }
+        public string UserId { get; set; }
         public DateTime CreationDate { get; set; }
         public ICollection<WishlistItemDto> WishlistItems { get; set; } = new List<WishlistItemDto>();
     }

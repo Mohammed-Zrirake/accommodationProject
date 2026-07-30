@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NavBar from "../components/NavBar";
 import StarRating from "../components/StarRating";
-
+import BookingCard from "../components/BookingCard";
 import { 
   HiLocationMarker, 
   HiHome, 
@@ -22,7 +22,9 @@ const ApartmentDetails = () => {
   const [mainImage, setMainImage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const ActionOnBookingSuccess = () => {
+    // pass
+  }
   // Helper function to get image URL
   const getImageUrl = (imageName) => `https://localhost:7263/images/${imageName}`;
 
@@ -244,7 +246,7 @@ const ApartmentDetails = () => {
 
           {/* Right Column - Booking Form */}
           <div className="lg:w-1/3">
-            <div className="bg-white shadow-xl rounded-xl p-6 sticky top-6">
+            {/*<div className="bg-white shadow-xl rounded-xl p-6 sticky top-6">
               <div className="flex justify-between items-start mb-6">
                 <div>
                   <p className="text-2xl font-bold text-blue-600">
@@ -315,7 +317,8 @@ const ApartmentDetails = () => {
                                     </p>
                                     </div>
               </form>
-            </div>
+            </div>*/}
+            <BookingCard accommondationId={apartment.id} unitType="accommodation" capacity={apartment.capacity} basePrice={apartment.basePricePerNight} onBookingSuccess={ActionOnBookingSuccess} />
           </div>
         </div>
 
