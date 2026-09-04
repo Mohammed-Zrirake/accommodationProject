@@ -1,30 +1,31 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace api.Models
 {
     [Table("Users")]
-    public class User
+    public class User : IdentityUser
     {
-        
-        [Key]
-        public string UserId { get; set; }=string.Empty;
+        // Backwards compatibility with existing code:
+        [NotMapped]
+        public string UserId
+        {
+            get => Id;
+            set => Id = value;
+        }
 
-        [Required]
-        [MaxLength(100)]
-        public string Username { get; set; } = string.Empty;
-
-        [Required]
-        [EmailAddress]
-        [MaxLength(255)]
-        public string Email { get; set; } = string.Empty;
-
-
+        [NotMapped]
+        public string Username
+        {
+            get => UserName ?? string.Empty;
+            set => UserName = value;
+        }
 
         public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
-        public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public virtual Wishlist? Wishlist { get; set; }
         public virtual ICollection<Card> Cards { get; set; } = new List<Card>();
