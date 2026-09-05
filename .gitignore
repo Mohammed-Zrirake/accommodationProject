@@ -10,6 +10,8 @@ obj/
 node_modules/
 dist/
 build/
+.next/
+client_legacy/
 
 # Environment files
 .env

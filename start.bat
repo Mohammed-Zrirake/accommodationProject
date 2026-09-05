@@ -1,7 +1,9 @@
 @echo off
-echo Starting all services...
+echo ========================================================
+echo Starting StayFinder Platform:
+echo 1. .NET 9 Web API + ASP.NET Core Identity (Port 5073)
+echo 2. Next.js 15 App Router Frontend (Port 3000)
+echo ========================================================
 
-start "API" cmd /c "cd api && dotnet watch run"
-start "Client" cmd /c "cd client && npm run dev"
-start "Owner" cmd /c "cd owner && npm run dev"
-start "Booking" cmd /c "cd Booking && npm run dev"
+start "StayFinder API (.NET 9)" cmd /c "cd api && dotnet watch run"
+start "StayFinder Frontend (Next.js)" cmd /c "cd client && npm run dev"
